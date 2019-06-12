@@ -1,6 +1,3 @@
-# coming soon 
-The Webpart is feature complete for version 1 and will be uploaded soon. stay tuned
-
 ## Modern Events Webpart
 A SharePoint Webpart integration of FullCalendar. This SPFX Solution can be used as an modern presentation of the classic SharePointClassic Calendar List.
 
