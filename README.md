@@ -1,3 +1,5 @@
+![](https://github.com/SolidSpace/modern-events/blob/master/assets/sharepoint_modern_calendar_banner.jpg)
+
 ## Modern Events Webpart
 This SharePoint Webpart Project brings you the legendary JS FullCalendar (https://fullcalendar.io) implemented into a SPFX Webpart. It displays your good old SharePoint Calendar List in Modern UI Style. 
 
@@ -17,3 +19,4 @@ It would be great, if someone provides more language files.
 Feel free to fork this project and modifiy it to whatever you need !!!
 
 **Sharing is caring**
+
