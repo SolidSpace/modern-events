@@ -1,7 +1,5 @@
 ## Modern Events Webpart
-The Legendary FullCalendar (https://fullcalendar.io) integrated into a SPFX Webpart to polish your classic calendar list.
-
-This SPFX Solution can be used as an modern presentation of the classic SharePointClassic Calendar List. Watch the Screenshots in the Wiki section.
+This SharePoint Webpart Project brings you the legendary JS FullCalendar (https://fullcalendar.io) implemented into a SPFX Webpart. It displays your good old SharePoint Calendar List in Modern UI Style. 
 
 **Please note**
 
