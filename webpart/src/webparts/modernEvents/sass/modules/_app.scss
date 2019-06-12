@@ -1,0 +1,69 @@
+.se-align-right{
+    text-align:right;
+}
+.se-align-center{
+    text-align:center;
+}
+.se-align-left{
+    text-align:left;
+}
+/*Fabric UI Modifications*/
+.se-icon-set{
+    font-size:22px;
+    color:"[theme: themePrimary, default: #0078d7]";
+    cursor: pointer;
+}
+.se-icon-set:hover{
+    font-size:22px;
+    color:"[theme: themePrimary, default: #0078d7]";
+    cursor: pointer;
+}
+.se-IconWrap{
+    margin:5px;
+    display: inline-block;
+}
+
+/*Application Base Container*/
+.se-appContainer{
+    height:100%;
+    overflow-y: scroll;
+}
+.se-WrapSpinner{
+    text-align:center;
+}
+.se-Config-Icon{
+    color:"[theme: themePrimary, default: #0078d7]";
+    font-size:64px;
+}
+/*Badges*/
+.se-badge-container{
+    display: inline-block;
+    height: 50px;
+    width: 170px;
+}
+.se-badge-iconWrap{
+    height: 100%;
+    width: 50px;
+    text-align: center;
+    vertical-align: middle;
+    display:inline-block;
+}
+.se-badge-textWrap{
+    height: 35px;
+    display:inline-block;
+}
+.se-badge-icon{
+    margin-top: 13px;
+    color: #fff;
+    font-size:22px;
+}
+.se-badge-text{
+    padding-left: 10px;
+    color: #fff;
+}
+.se-hide{
+    display:none;
+}
+.se-show{
+    display:block;
+}

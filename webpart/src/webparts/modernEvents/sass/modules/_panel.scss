@@ -1,0 +1,54 @@
+.se-PanelActions{
+  margin:40px 35px 0px 0px;
+  display: inline-block;
+  text-align: left;
+  width: 100%;
+
+}
+
+.se-PanelAction{
+  margin-left:10px;
+  display: inline-block;
+}
+.se-PanelAction-Primary{
+  color:"[theme: themePrimary, default: #0078d7]";
+  font-size:1.8em;
+  cursor:pointer;
+}
+
+.se-PanelAction-Secondary{
+  color:"[theme: themeLight, default: #0078d7]";
+  font-size:1.8em;
+  cursor:pointer;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted "[theme: themePrimary, default: #0078d7]";
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: "[theme: themePrimary, default: #0078d7]";
+  color: "[theme: themeLighterAlt, default: #0078d7]";
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.overwriteGridShrinking{
+  width:100%;
+}
