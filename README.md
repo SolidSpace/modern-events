@@ -1,5 +1,5 @@
 ## Modern Events Webpart
-The Legendary FullCalendar integrated into a SPFX Webpart.
+The Legendary FullCalendar (https://fullcalendar.io) integrated into a SPFX Webpart to polish your classic calendar list.
 
 This SPFX Solution can be used as an modern presentation of the classic SharePointClassic Calendar List. Watch the Screenshots in the Wiki section.
 
