@@ -9,6 +9,7 @@ Please refer to the Wiki Pages for further informations.
 https://github.com/SolidSpace/modern-events/wiki
 
 **Localization**
+
 This Webpart is currently available in following language : english, german
 It would be great if someone could provide some other languages.
 
