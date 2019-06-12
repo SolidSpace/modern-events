@@ -12,6 +12,6 @@ https://github.com/SolidSpace/modern-events/wiki
 This Webpart is currently available in following language : english, german
 It would be great if someone could provide some other languages.
 
-Feel free to fork this project and modifiy it to whatever you need and remeber
+Feel free to fork this project and modifiy it to whatever you need !!!
 
 **Sharing is caring**
