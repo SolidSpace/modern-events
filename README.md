@@ -1,4 +1,4 @@
-# modern-events
+# Modern Events Webpart
 A SharePoint Webpart integration of FullCalendar. This SPFX Solution can be used as an modern presentation of the classic SharePointClassic Calendar List.
 
 This Webpart is currently available in following language : english, german
