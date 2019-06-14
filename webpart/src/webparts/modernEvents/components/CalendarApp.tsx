@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
-import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
-import { MockupData } from "./MockupData";
 import { CalendarCommandbar } from './CalendarCommandbar';
 import { DisplayType } from './ENUMDisplayType';
 import { EventCalendar } from "./EventCalendar";

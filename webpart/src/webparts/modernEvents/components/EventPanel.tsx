@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import * as strings from 'ModernEventsWebPartStrings';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Label } from 'office-ui-fabric-react/lib/Label';
@@ -34,6 +35,7 @@ export interface IEventPanelState {
   isEditMode: boolean;
   isOpen: boolean;
   isDialogOpen: boolean;
+  isSaveInProgress:boolean;
   event: ISPEvent;
   inputValidation: boolean;
 }
@@ -48,7 +50,8 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
         isOpen: true,
         isDialogOpen: false,
         event: EventConverter.getSPEvent(props.event),
-        inputValidation: false
+        inputValidation: false,
+        isSaveInProgress:false
       };
     } else {
       this.state = {
@@ -64,7 +67,8 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
           Category: "",
           Description: ""
         },
-        inputValidation: false
+        inputValidation: false,
+        isSaveInProgress:false
       };
     }
   }
@@ -248,7 +252,9 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
    * Returns current Action Buttons depending on EditMode State
    */
   private _getActionButtons(): JSX.Element {
-    debugger;
+    if(this.state.isSaveInProgress){
+      return <div className="se-PanelActions"><Spinner label="save in progress" labelPosition="bottom" size={SpinnerSize.large}></Spinner></div>;
+    }
     let relativeSiteUrl = this.props.remoteSiteUrl ? this.props.remoteSiteUrl.replace(/https:\/\/.+.sharepoint.com/g, "") + this.props.relativeLibOrListUrl : "";
     relativeSiteUrl = !relativeSiteUrl.substr(1, 1).match("/") ? relativeSiteUrl : "/" + relativeSiteUrl;
     if (this.state.isEditMode) {
@@ -320,13 +326,15 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
       this.setState({ inputValidation: true });
       return;
     }
+    this.setState({isSaveInProgress:true});
 
     this.props.cbSave(this.state.event).then((result) => {
       setTimeout(() => { }, 50);
       this.props.cbRefreshGrid();
       this.setState({
         ...this.state,
-        isEditMode: !this.state.isEditMode
+        isEditMode: !this.state.isEditMode,
+        isSaveInProgress:false
       });
 
     });
