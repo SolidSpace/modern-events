@@ -109,6 +109,11 @@ public componentWillReceiveProps(nextProps:IEventCalendarProps){
             customButtons={btn}
             header={header}
             dateClick={this._dateClick.bind(this)}
+            slotLabelFormat={ {
+              hour12: (this.props.timeformat=='12h')?true:false,
+              hour: '2-digit',
+              minute: '2-digit',
+            }}
             eventTimeFormat={ {
               hour12: (this.props.timeformat=='12h')?true:false,
               hour: '2-digit',
