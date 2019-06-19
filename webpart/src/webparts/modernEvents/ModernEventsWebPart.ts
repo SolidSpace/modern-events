@@ -37,11 +37,6 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
   private _otherDisabled = true;
 
   public render(): void {
-//this.context.pageContext.web.absoluteUrl
-    console.log(this.context.pageContext.web.absoluteUrl);
-    console.log(this.properties.site);
-
-
     if(this.properties.site && this.properties.listTitle){
       const app: React.ReactElement<ICalendarAppProps> = React.createElement(
         CalendarApp,
@@ -73,13 +68,6 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
       );
       ReactDom.render(configure, this.domElement);
     }
-
-
-
-
-
-    //ReactDom.render(app, this.domElement);
-
   }
 
   private _onConfigureWebpart(){

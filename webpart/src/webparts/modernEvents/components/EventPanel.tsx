@@ -264,7 +264,7 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
             <div className="tooltip">
               <Icon iconName="Accept" className="se-PanelAction-Primary ms-font-xxl" onClick={this._save.bind(this)} />
               <span className="tooltiptext">{strings.TooltipSave}</span>
-            </div>
+            </div>i#
           </div>
           <div className="se-PanelAction ">
             <div className="tooltip">

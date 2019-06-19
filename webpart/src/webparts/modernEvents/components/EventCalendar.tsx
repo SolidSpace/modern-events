@@ -6,7 +6,7 @@ import listPlugin from '@fullcalendar/list';
 import { IFullCalendarEvent } from "./IFullCalendarEvent";
 import {  ToolbarInput } from '@fullcalendar/core/types/input-types';
 import {DisplayType} from './ENUMDisplayType';
-
+import interactionPlugin from '@fullcalendar/interaction';
 
 export interface IEventCalendarProps {
   cbSelectEntry:any;
@@ -73,7 +73,7 @@ public componentWillReceiveProps(nextProps:IEventCalendarProps){
       right: "todayCustom nextMonth"
 
     };
-    let defaultView="timeGridWeek";
+    let defaultView="dayGridMonth";
     let plugins=[timeGridPlugin];
     switch (this.state.displayType) {
       case DisplayType.DayGrid:
