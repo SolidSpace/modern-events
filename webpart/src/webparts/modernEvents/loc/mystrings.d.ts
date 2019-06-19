@@ -43,6 +43,8 @@ declare interface IModernEventsWebPartStrings {
   TooltipEdit:string;
   TooltipSave:string;
   TooltipDelete:string;
+  //Fullcalendar
+  LabelAllDay:string;
 }
 
 declare module 'ModernEventsWebPartStrings' {

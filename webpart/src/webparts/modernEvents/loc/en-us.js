@@ -42,6 +42,8 @@ define([], function() {
     "TooltipCancel":"Cancel",
     "TooltipEdit":"Edit",
     "TooltipSave":"Save",
-    "TooltipDelete":"Delete"
+    "TooltipDelete":"Delete",
+    //Fullcalendar
+    "LabelAllDay":"all-day"
   }
 });

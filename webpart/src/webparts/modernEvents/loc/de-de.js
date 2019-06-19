@@ -43,6 +43,8 @@ define([], function() {
     "TooltipCancel":"Abbrechen",
     "TooltipEdit":"Bearbeiten",
     "TooltipSave":"Speichern",
-    "TooltipDelete":"Löschen"
+    "TooltipDelete":"Löschen",
+    //Fullcalendar
+    "LabelAllDay":"Tag"
   }
 });

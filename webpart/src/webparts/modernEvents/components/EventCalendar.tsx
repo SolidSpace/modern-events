@@ -7,7 +7,7 @@ import { IFullCalendarEvent } from "./IFullCalendarEvent";
 import {  ToolbarInput } from '@fullcalendar/core/types/input-types';
 import {DisplayType} from './ENUMDisplayType';
 import interactionPlugin from '@fullcalendar/interaction';
-
+import * as strings from 'ModernEventsWebPartStrings';
 export interface IEventCalendarProps {
   cbSelectEntry:any;
   cbUpdateEvents:any;
@@ -98,6 +98,7 @@ public componentWillReceiveProps(nextProps:IEventCalendarProps){
 
     return (
           <FullCalendar
+            allDayText={strings.LabelAllDay}
             ref={this.calRef}
             defaultView={defaultView}
             plugins={plugins}
@@ -110,6 +111,11 @@ public componentWillReceiveProps(nextProps:IEventCalendarProps){
             customButtons={btn}
             header={header}
             dateClick={this._dateClick.bind(this)}
+           slotLabelFormat={ {
+            hour12: (this.props.timeformat=='12h')?true:false,
+            hour: '2-digit',
+            minute: '2-digit',
+          }}
             eventTimeFormat={ {
               hour12: (this.props.timeformat=='12h')?true:false,
               hour: '2-digit',
