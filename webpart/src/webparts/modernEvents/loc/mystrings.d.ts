@@ -11,6 +11,7 @@ declare interface IModernEventsWebPartStrings {
   SiteGroupName: string;
   CommandbarGroupName:string;
   DisplayGroupName:string;
+  InteractionGroupName:string;
   // Labels
   LabelViewButtons:string;
   LabelTimeformat:string;
@@ -22,6 +23,7 @@ declare interface IModernEventsWebPartStrings {
   LabelViewMonth:string;
   LabelViewWeek:string;
   LabelViewList:string;
+  LabelInterActionEventClickNew:string;
   //Commandbar Labels
   LabelButtonNew:string;
   LabelButtonNewEvent:string;

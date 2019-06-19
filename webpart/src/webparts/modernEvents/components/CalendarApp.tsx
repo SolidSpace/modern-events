@@ -17,6 +17,10 @@ import { ISPEvent } from './ISPEvent';
 import { ItemUpdateResult, ItemAddResult } from '@pnp/sp';
 import { ICBButtonVisibility } from "./ICBButtonVisibility";
 
+export interface IInteraction{
+  dateClickNew:boolean;
+}
+
 export interface ICalendarAppProps {
   context: any;
   listName: string;
@@ -26,6 +30,7 @@ export interface ICalendarAppProps {
   commandBarButtonVisibility: ICBButtonVisibility;
   commandBarVisible:boolean;
   timeformat:string;
+  interactions:IInteraction;
 }
 
 export interface ICalendarAppState {
@@ -85,6 +90,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                       cbUpdateEvents={this._queryEvents.bind(this)}
                       events={calEvents}
                       timeformat={this.props.timeformat}
+                      cbNewEvent={this._newEntry.bind(this)}
                       >
                       </EventCalendar>
         });
@@ -111,6 +117,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                       cbUpdateEvents={this._queryEvents.bind(this)}
                       events={calEvents}
                       timeformat={this.props.timeformat}
+                      cbNewEvent={this._newEntry.bind(this)}
                       >
                       </EventCalendar>
         });
@@ -125,6 +132,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                     cbUpdateEvents={this._queryEvents.bind(this)}
                     events={[]}
                     timeformat={this.props.timeformat}
+                    cbNewEvent={this._newEntry.bind(this)}
                     ></EventCalendar>
       });
     }
@@ -173,6 +181,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
             cbUpdateEvents={this._queryEvents.bind(this)}
             events={events}
             timeformat={this.props.timeformat}
+            cbNewEvent={this._newEntry.bind(this)}
           ></EventCalendar>
       }
       );
@@ -184,7 +193,12 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
   /**
    * Activates the Event Panel in edit mode to display Input Form
    */
-  private _newEntry() {
+  private _newEntry(newDate:string) {
+    if(!this. props.interactions.dateClickNew && typeof newDate=='string'){
+      return;
+    }else if(typeof newDate!='string'){
+      newDate=null;
+    }
     this.setState({
       panel: <EventPanel
         cbRefreshGrid={this._updateGrid.bind(this)}
@@ -196,6 +210,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
         relativeLibOrListUrl={this.props.relativeLibOrListUrl}
         remoteSiteUrl={this.props.remoteSiteUrl}
         timeformat={this.props.timeformat}
+        newDateStr={newDate}
       ></EventPanel>
     });
   }
@@ -239,6 +254,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                     cbUpdateEvents={this._queryEvents.bind(this)}
                     events={calEvents}
                     timeformat={this.props.timeformat}
+                    cbNewEvent={this._newEntry.bind(this)}
                     ></EventCalendar>
       });
     }).catch((error) => {

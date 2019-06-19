@@ -12,6 +12,7 @@ define([], function() {
     "SiteGroupName": "Site Settings",
     "CommandbarGroupName":"Commandbar Settings",
     "DisplayGroupName":"Display Options",
+    "InteractionGroupName":"Interactions",
     // Labels
     "LabelTimeFormat":"Display Timeformat",
     "LabelViewButtons":"View Buttons",
@@ -22,6 +23,7 @@ define([], function() {
     "LabelViewMonth":"Month View",
     "LabelViewWeek":"Week View",
     "LabelViewList":"List View",
+    "LabelInterActionEventClickNew":"Click Date for new Event",
     // Labels Commandbar
     "LabelButtonNew":"New",
     "LabelButtonNewEvent":"Event",

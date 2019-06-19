@@ -26,7 +26,8 @@
       "viewWeek":true,
       "viewList":true,
       "commandbar":true,
-      "timeformat":"24h"
+      "timeformat":"24h",
+      "interactionEventClick":true
     }
   }]
 }

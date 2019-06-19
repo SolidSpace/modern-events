@@ -11,6 +11,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 export interface IEventCalendarProps {
   cbSelectEntry:any;
   cbUpdateEvents:any;
+  cbNewEvent:any;
   events: IFullCalendarEvent[];
   displayType?:DisplayType;
   timeformat:string;
@@ -74,23 +75,23 @@ public componentWillReceiveProps(nextProps:IEventCalendarProps){
 
     };
     let defaultView="dayGridMonth";
-    let plugins=[timeGridPlugin];
+    let plugins=[interactionPlugin,timeGridPlugin];
     switch (this.state.displayType) {
       case DisplayType.DayGrid:
         defaultView="dayGridMonth";
-        plugins=[dayGridPlugin];
+        plugins=[interactionPlugin,dayGridPlugin];
       break;
       case DisplayType.TimeGrid:
         defaultView="timeGridWeek";
-        plugins=[timeGridPlugin];
+        plugins=[interactionPlugin,timeGridPlugin];
       break;
       case DisplayType.ListGrid:
         defaultView="listWeek";
-        plugins=[listPlugin];
+        plugins=[interactionPlugin,listPlugin];
       break;
       default:
         defaultView="dayGridMonth";
-        plugins=[dayGridPlugin];
+        plugins=[interactionPlugin,dayGridPlugin];
       break;
     }
 
@@ -117,8 +118,12 @@ public componentWillReceiveProps(nextProps:IEventCalendarProps){
             }}
           />
     );
-
   }
+
+  private _eventDragStop(event:any){
+    console.log(event);
+  }
+
   private _navigateToday(){
     let calendarApi = this.calRef.current.getApi();
     calendarApi.today();
@@ -130,7 +135,7 @@ public componentWillReceiveProps(nextProps:IEventCalendarProps){
 
   }
   private _dateClick(parms: any): void {
-    console.log("n  ext");
+    this.props.cbNewEvent(parms.dateStr);
   }
 
   private _navigateNext(parms: any): void {

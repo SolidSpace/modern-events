@@ -28,7 +28,7 @@ export interface IModernEventsWebPartProps {
   viewWeek: boolean;
   viewList: boolean;
   timeformat:string;
-
+  interactionEventClick:boolean
 }
 export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEventsWebPartProps> {
   private _siteOptions: IPropertyPaneDropdownOption[] = [];
@@ -52,7 +52,8 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
             month:this.properties.viewMonth,
             time:this.properties.viewWeek,
             list:this.properties.viewList
-          }
+          },
+          interactions:{dateClickNew:this.properties.interactionEventClick?this.properties.interactionEventClick:true}
         }
       );
       ReactDom.render(app, this.domElement);
@@ -188,6 +189,16 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                   options: [{key:'24h',text:'24 Hours'},{key:'12h',text:'12 Hours AM/PM'}],
                   disabled: false
                 })
+              ]
+            },
+            {
+              groupName: strings.InteractionGroupName,
+              groupFields: [
+                PropertyPaneCheckbox('interactionEventClick', {
+                  text: strings.LabelInterActionEventClickNew,
+                  checked: true,
+                  disabled: false
+                }),
               ]
             },
             {

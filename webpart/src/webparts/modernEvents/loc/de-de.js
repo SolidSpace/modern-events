@@ -13,6 +13,7 @@ define([], function() {
     "SiteGroupName": "Seiteneinstellung",
     "CommandbarGroupName":"Aktionsleiste",
     "DisplayGroupName":"Darstellungsoptione",
+    "InteractionGroupName":"Benutzer Interaktion",
     // Labels
     "LabelTimeFormat":"Format der Zeitanzeige",
     "LabelViewButtons":"Listen Buttons",
@@ -23,6 +24,7 @@ define([], function() {
     "LabelViewMonth":"Monatsanzeige",
     "LabelViewWeek":"Wochenanzeige",
     "LabelViewList":"Listenanzeige",
+    "LabelInterActionEventClickNew":"Neuer Termin bei Datumsklick",
     // Labels Commandbar
     "LabelButtonNew":"Neu",
     "LabelButtonNewEvent":"Termin",
