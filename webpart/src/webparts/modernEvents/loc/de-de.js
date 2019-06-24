@@ -24,6 +24,7 @@ define([], function() {
     "LabelViewMonth":"Monatsanzeige",
     "LabelViewWeek":"Wochenanzeige",
     "LabelViewList":"Listenanzeige",
+    "LabelUseCustomList":"Custom Liste verwenden",
     "LabelInterActionEventClickNew":"Neuer Termin bei Datumsklick",
     "LabelInterActionEventDragDrop":"Termin verschieben mit Drag & Drop",
     // Labels Commandbar

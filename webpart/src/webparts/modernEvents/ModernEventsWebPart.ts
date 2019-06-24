@@ -30,10 +30,14 @@ export interface IModernEventsWebPartProps {
   timeformat:string;
   interactionEventClick:boolean;
   interactionEventDragDrop:boolean;
+  supportCustomList:boolean;
 }
 export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEventsWebPartProps> {
   private _siteOptions: IPropertyPaneDropdownOption[] = [];
   private _listOptions: IPropertyPaneDropdownOption[] = [];
+  private _textColumnOptions: IPropertyPaneDropdownOption[] = [];
+  private _dateColumnOptions: IPropertyPaneDropdownOption[] = [];
+  private _multilineColumnOptions: IPropertyPaneDropdownOption[] = [];
   private _listDisabled = true;
   private _otherDisabled = true;
 
@@ -99,7 +103,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
         this.context.propertyPane.refresh();
         //let siteUrl = this.properties.site;
         if (this.properties.site) {
-          con.getCalendarListTitles(this.properties.site).then((listTitleResult) => {
+          con.getListTitlesByTemplate(this.properties.site,"100").then((listTitleResult) => {
             this._listOptions = listTitleResult.value.map((list: ISPList) => {
               return {
                 key: list.Title,
@@ -127,12 +131,17 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
       this._otherDisabled = true;
       this.properties.siteOther = null;
       this.properties.listTitle = null;
+    } else if(propertyPath=='supportCustomList') {
+    //  this.properties.listTitle = null;
     }
     let con: SiteConnector = new SiteConnector(this.context);
-    if ((propertyPath === 'site' || propertyPath === 'other') && newValue) {
+    if (
+      ((propertyPath === 'site' || propertyPath === 'other') && newValue) || (propertyPath=='supportCustomList') ){
       this._listDisabled = true;
-      var siteUrl = newValue;
-      con.getCalendarListTitles(this.properties.site).then((listTitleResult) => {
+      //var siteUrl = newValue;
+      let listType:string = this.properties.supportCustomList?"100":"106";
+
+      con.getListTitlesByTemplate(this.properties.site,listType ).then((listTitleResult) => {
         this._listOptions = listTitleResult.value.map((list: ISPList) => {
           return {
             key: list.Title,
@@ -144,6 +153,8 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
         this.context.propertyPane.refresh();
         this.render();
       });
+    } else if(propertyPath =='listTitle'){
+
     }
 
 
@@ -156,6 +167,52 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
 
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+    let custListStartDate:any=PropertyPaneLabel('emptyLabel', {
+      text: ""
+    });
+    let custListEndDate:any=PropertyPaneLabel('emptyLabel', {
+      text: ""
+    });
+    let custListTitle:any=PropertyPaneLabel('emptyLabel', {
+      text: ""
+    });
+    let custListCategory:any=PropertyPaneLabel('emptyLabel', {
+      text: ""
+    });
+    let custListLocation:any=PropertyPaneLabel('emptyLabel', {
+      text: ""
+    });
+    let custListDescription:any=PropertyPaneLabel('emptyLabel', {
+      text: ""
+    });
+    if(this.properties.supportCustomList && this.properties.listTitle!=""){
+      custListStartDate= PropertyPaneDropdown('start', {
+        label: 'Start Date Field',
+        options: this._dateColumnOptions,
+        disabled: false
+      });
+      custListEndDate = PropertyPaneDropdown('end', {
+        label: 'End Date Field',
+        options: this._dateColumnOptions,
+        disabled: false
+      }),
+      custListCategory = PropertyPaneDropdown('title', {
+        label: 'Event Title Field',
+        options: this._textColumnOptions,
+        disabled: false
+      }),
+      custListTitle = PropertyPaneDropdown('title', {
+        label: 'Event Title Field',
+        options: this._textColumnOptions,
+        disabled: false
+      }),
+      custListDescription = PropertyPaneDropdown('detail', {
+        label: 'Event Details',
+        options: this._textColumnOptions,
+        disabled: false
+      });
+    }
+
     return {
       pages: [
         {
@@ -177,11 +234,24 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                   disabled: this._otherDisabled
 
                 }),*/
+                PropertyPaneCheckbox('supportCustomList', {
+                  text: strings.LabelUseCustomList,
+                  checked: false,
+                  disabled: false
+                }),
                 PropertyPaneDropdown('listTitle', {
                   label: strings.LabelListTitle,
                   options: this._listOptions,
                   disabled: this._listDisabled
                 }),
+                custListStartDate,
+                custListEndDate,
+                custListCategory,
+                custListLocation,
+                custListTitle,
+                custListDescription
+
+
               ]
             },
             {

@@ -25,6 +25,7 @@ declare interface IModernEventsWebPartStrings {
   LabelViewList:string;
   LabelInterActionEventClickNew:string;
   LabelInterActionEventDragDrop:string;
+  LabelUseCustomList:string;
   //Commandbar Labels
   LabelButtonNew:string;
   LabelButtonNewEvent:string;

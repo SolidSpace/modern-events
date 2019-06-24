@@ -23,6 +23,7 @@ define([], function() {
     "LabelViewMonth":"Month View",
     "LabelViewWeek":"Week View",
     "LabelViewList":"List View",
+    "LabelUseCustomList":"Use Custom List instead of Event List",
     "LabelInterActionEventClickNew":"Click Date for new Event",
     "LabelInterActionEventDragDrop":"Enable Event Drag & Drop",
     // Labels Commandbar
