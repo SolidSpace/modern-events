@@ -24,6 +24,7 @@ define([], function() {
     "LabelViewWeek":"Week View",
     "LabelViewList":"List View",
     "LabelInterActionEventClickNew":"Click Date for new Event",
+    "LabelInterActionEventDragDrop":"Enable Event Drag & Drop",
     // Labels Commandbar
     "LabelButtonNew":"New",
     "LabelButtonNewEvent":"Event",

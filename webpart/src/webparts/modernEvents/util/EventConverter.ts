@@ -2,6 +2,13 @@ import { ISPEvent } from "../components/ISPEvent";
 import { IFullCalendarEvent } from "../components/IFullCalendarEvent";
 import * as moment from 'moment';
 
+export interface IEventDelta{
+  days:number;
+  milliseconds:number;
+  months:number;
+  years:number;
+}
+
 export class EventConverter {
 
   public static getSPEvent(event: IFullCalendarEvent): ISPEvent {
@@ -24,6 +31,11 @@ export class EventConverter {
       spEvent.EndDate = moment(event.end).format("YYYY-MM-DDTHH:mm:ss");
     }
      return spEvent;
+  }
+
+  public static applyDelta(spEvent:ISPEvent,delta:IEventDelta){
+    spEvent.EventDate = moment(spEvent.EventDate).add('years',delta.years).add('months',delta.months).add('days',delta.years).add('milliseconds',delta.milliseconds).format("YYYY-MM-DDTHH:mm:ss");
+    spEvent.EndDate = moment(spEvent.EndDate).add('years',delta.years).add('months',delta.months).add('days',delta.years).add('milliseconds',delta.milliseconds).format("YYYY-MM-DDTHH:mm:ss");
   }
 
   public static getFCEvent(event: ISPEvent): IFullCalendarEvent {

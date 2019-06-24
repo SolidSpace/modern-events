@@ -28,7 +28,8 @@ export interface IModernEventsWebPartProps {
   viewWeek: boolean;
   viewList: boolean;
   timeformat:string;
-  interactionEventClick:boolean
+  interactionEventClick:boolean;
+  interactionEventDragDrop:boolean;
 }
 export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEventsWebPartProps> {
   private _siteOptions: IPropertyPaneDropdownOption[] = [];
@@ -53,7 +54,10 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
             time:this.properties.viewWeek,
             list:this.properties.viewList
           },
-          interactions:{dateClickNew:this.properties.interactionEventClick?this.properties.interactionEventClick:true}
+          interactions:{
+            dateClickNew:!this.properties.interactionEventClick?this.properties.interactionEventClick:true,
+            dragAndDrop:!this.properties.interactionEventDragDrop?this.properties.interactionEventDragDrop:true
+          }
         }
       );
       ReactDom.render(app, this.domElement);
@@ -196,6 +200,11 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
               groupFields: [
                 PropertyPaneCheckbox('interactionEventClick', {
                   text: strings.LabelInterActionEventClickNew,
+                  checked: true,
+                  disabled: false
+                }),
+                PropertyPaneCheckbox('interactionEventDragDrop', {
+                  text: strings.LabelInterActionEventDragDrop,
                   checked: true,
                   disabled: false
                 }),

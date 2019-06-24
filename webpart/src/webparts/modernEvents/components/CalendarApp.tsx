@@ -19,6 +19,7 @@ import { ICBButtonVisibility } from "./ICBButtonVisibility";
 
 export interface IInteraction{
   dateClickNew:boolean;
+  dragAndDrop:boolean;
 }
 
 export interface ICalendarAppProps {
@@ -66,7 +67,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     this.props.context.propertyPane.open();
   }
   public componentWillReceiveProps(nextProps: ICalendarAppProps) {
-    //console.log(nextProps);
+    console.log("AppNextProps:");
+    console.log(nextProps);
     let displayDate: Date = this.eventCalRef.current.getDisplayDate();
     displayDate = displayDate ? displayDate : new Date();
 
@@ -91,6 +93,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                       events={calEvents}
                       timeformat={this.props.timeformat}
                       cbNewEvent={this._newEntry.bind(this)}
+                      cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                      interactions={nextProps.interactions}
                       >
                       </EventCalendar>
         });
@@ -118,6 +122,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                       events={calEvents}
                       timeformat={this.props.timeformat}
                       cbNewEvent={this._newEntry.bind(this)}
+                      cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                      interactions={this.props.interactions}
                       >
                       </EventCalendar>
         });
@@ -133,6 +139,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                     events={[]}
                     timeformat={this.props.timeformat}
                     cbNewEvent={this._newEntry.bind(this)}
+                    cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                    interactions={this.props.interactions}
                     ></EventCalendar>
       });
     }
@@ -182,6 +190,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
             events={events}
             timeformat={this.props.timeformat}
             cbNewEvent={this._newEntry.bind(this)}
+            cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+            interactions={this.props.interactions}
           ></EventCalendar>
       }
       );
@@ -229,6 +239,10 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     });
   }
 
+  private _dragDropUpdateEvent(event:IFullCalendarEvent){
+    let spEvent:ISPEvent = EventConverter.getSPEvent(event);
+    this._saveChanges(spEvent);
+  }
 
 
   /**
@@ -255,6 +269,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                     events={calEvents}
                     timeformat={this.props.timeformat}
                     cbNewEvent={this._newEntry.bind(this)}
+                    cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                    interactions={this.props.interactions}
                     ></EventCalendar>
       });
     }).catch((error) => {
