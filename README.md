@@ -6,7 +6,8 @@ This SharePoint Webpart Project brings you the legendary JS FullCalendar (https:
 **Please note**
 
 This Webpart is not supported by Microsoft. Use it at your own risk. Please use the issues tab to report issues.
-*The modern events webpart is not compatible with IE11 and it is not planned to fix this.
+
+**The modern events webpart is not compatible with IE11 and it is not planned to fix this.
 
 Please refer to the Wiki Pages for further informations.
 https://github.com/SolidSpace/modern-events/wiki
