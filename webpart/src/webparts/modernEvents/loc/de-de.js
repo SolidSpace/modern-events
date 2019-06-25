@@ -27,6 +27,13 @@ define([], function() {
     "LabelUseCustomList":"Custom Liste verwenden",
     "LabelInterActionEventClickNew":"Neuer Termin bei Datumsklick",
     "LabelInterActionEventDragDrop":"Termin verschieben mit Drag & Drop",
+    "LabelCustListFieldMap":"Custom List Fields",
+    "LabelCustListTitle": "Titel Feld",
+    "LabelCustListCategory": "Kategorie Feld",
+    "LabelCustListLocation": "Ort Feld",
+    "LabelCustListStart": "Start Datum Feld",
+    "LabelCustListEnd": "Ende Datum Feld",
+    "LabelCustListDescription": "Beschreibung (mehrzeiliges Feld)",
     // Labels Commandbar
     "LabelButtonNew":"Neu",
     "LabelButtonNewEvent":"Termin",

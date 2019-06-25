@@ -80,7 +80,7 @@ export class SiteConnector{
    * @param listsite
    */
   public getEventListColumns(listNameColumns: string,listsite: string): Promise<any> {
-    return this.context.spHttpClient.get(listsite + `/_api/web/lists/GetByTitle('${listNameColumns}')/Fields?$filter=Hidden eq false and ReadOnlyField eq false and (FieldTypeKind eq 4 or FieldTypeKind eq 6)`, SPHttpClient.configurations.v1)
+    return this.context.spHttpClient.get(listsite + `/_api/web/lists/GetByTitle('${listNameColumns}')/Fields?$filter=Hidden eq false and ReadOnlyField eq false and (FieldTypeKind eq 2 or FieldTypeKind eq 3 or FieldTypeKind eq 4 or FieldTypeKind eq 6)`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });
