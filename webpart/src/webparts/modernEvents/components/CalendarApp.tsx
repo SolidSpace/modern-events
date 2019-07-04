@@ -16,13 +16,14 @@ import { EventConverter } from "../util/EventConverter";
 import { ISPEvent } from './ISPEvent';
 import { ItemUpdateResult, ItemAddResult } from '@pnp/sp';
 import { ICBButtonVisibility } from "./ICBButtonVisibility";
-
+import { IFieldMap } from   './IFieldMap';
 export interface IInteraction{
   dateClickNew:boolean;
   dragAndDrop:boolean;
 }
 
 export interface ICalendarAppProps {
+  fieldMapping:IFieldMap;
   context: any;
   listName: string;
   remoteSiteUrl: string;
@@ -67,7 +68,6 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     this.props.context.propertyPane.open();
   }
   public componentWillReceiveProps(nextProps: ICalendarAppProps) {
-    console.log("AppNextProps:");
     console.log(nextProps);
     let displayDate: Date = this.eventCalRef.current.getDisplayDate();
     displayDate = displayDate ? displayDate : new Date();
@@ -307,14 +307,20 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
         break;
     }
     var camlBuilder = new CamlBuilder();
+    /*
     var caml: string = camlBuilder.Where()
       .DateField("EventDate").GreaterThan(moment(startDate).toDate())
       .And()
       .DateField("EndDate").LessThanOrEqualTo(moment(endDate).toDate()).ToString();
+    */
+   var caml: string = camlBuilder.Where()
+   .DateField(this.props.fieldMapping["EventDate"]).GreaterThan(moment(startDate).toDate())
+   .And()
+   .DateField(this.props.fieldMapping["EndDate"]).LessThanOrEqualTo(moment(endDate).toDate()).ToString();
     caml = `<View>${caml}</View>`;
     return con.getItemByCAML(listName, { ViewXml: caml }).then((result) => {
       let calEvents = result.map((event) => {
-        return EventConverter.getFCEvent(event);
+        return EventConverter.getFCEvent(event,this.props.fieldMapping);
       });
       return Promise.resolve(calEvents);
     }).catch((error) => {

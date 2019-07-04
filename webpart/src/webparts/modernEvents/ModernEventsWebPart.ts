@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Version } from '@microsoft/sp-core-library';
-import { BaseClientSideWebPart, IPropertyPaneDropdownOption, PropertyPaneDropdown, PropertyPaneCheckbox, PropertyPaneLabel, PropertyPaneButton,PropertyPaneButtonType } from '@microsoft/sp-webpart-base';
+import { BaseClientSideWebPart, IPropertyPaneDropdownOption, PropertyPaneDropdown, PropertyPaneCheckbox, PropertyPaneLabel, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-webpart-base';
 import {
   IPropertyPaneConfiguration,
   PropertyPaneTextField
@@ -16,6 +16,8 @@ import { DisplayType } from './components/ENUMDisplayType';
 //import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
 import { SiteConnector, ISPList } from './services/SiteConnector';
 import { string } from 'prop-types';
+import { IFieldMap } from   './components/IFieldMap';
+import { Feature } from '@pnp/sp/src/features';
 //import { RectangleEdge } from 'office-ui-fabric-react/lib/utilities/positioning';
 
 export interface IModernEventsWebPartProps {
@@ -34,6 +36,7 @@ export interface IModernEventsWebPartProps {
   custListStart: string;
   custListEnd: string;
   custListDescription: string;
+  custListAllDayEvent: string;
   interactionEventClick: boolean;
   interactionEventDragDrop: boolean;
   supportCustomList: boolean;
@@ -46,6 +49,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
   private _dateColumnOptions: IPropertyPaneDropdownOption[] = [];
   private _multilineColumnOptions: IPropertyPaneDropdownOption[] = [];
   private _categoryColumnOptions: IPropertyPaneDropdownOption[] = [];
+  private _yesnoColumnOptions: IPropertyPaneDropdownOption[] = [];
   private _listDisabled = true;
   private _otherDisabled = true;
 
@@ -54,13 +58,15 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
       (!this.properties.supportCustomList && this.properties.site && this.properties.listTitle)
       ||
       (this.properties.supportCustomList && this.properties.site && this.properties.listTitle &&
-        this.properties.custListTitle && this.properties.custListLocation && this.properties.custListCategory && this.properties.custListDescription && this.properties.custListStart && this.properties.custListEnd
+        this.properties.custListTitle && this.properties.custListLocation && this.properties.custListCategory && this.properties.custListDescription && this.properties.custListStart && this.properties.custListEnd && this.properties.custListAllDayEvent
       )
     ) {
+      let fieldMap:IFieldMap = (this. properties.supportCustomList)? {"isDefaultSchema":false,"EventDate":this.properties.custListStart,"EndDate":this.properties.custListEnd,"Title":this.properties.custListTitle,"fAllDayEvent":this.properties.custListAllDayEvent,"Description":this.properties.custListDescription,"Location":this.properties.custListDescription,"Category":this.properties.custListCategory}:{"isDefaultSchema":true,"EventDate":"EventDate","EndDate":"EndDate","Title":"Title","fAllDayEvent":"fAllDayEvent","Description":"Description","Location":"Location","Category":"Category"};
 
       const app: React.ReactElement<ICalendarAppProps> = React.createElement(
         CalendarApp,
         {
+          fieldMapping:fieldMap,
           context: this.context,
           remoteSiteUrl: this.properties.site,
           relativeLibOrListUrl: "/lists/" + this.properties.listTitle,
@@ -92,6 +98,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
       );
       ReactDom.render(configure, this.domElement);
     }
+
   }
 
   private _onConfigureWebpart() {
@@ -187,6 +194,9 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
               case 6:
                 this._categoryColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
                 break;
+              case 8:
+                this._yesnoColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
+                break;
             }
           });
           this.context.propertyPane.refresh();
@@ -203,7 +213,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
     return Version.parse('1.0');
   }
 
-  private _checkCustomList(){
+  private _checkCustomList() {
     console.log('click');
   }
 
@@ -256,7 +266,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
                 PropertyPaneDropdown('custListEnd', {
-                  label: strings.LabelCustListStart,
+                  label: strings.LabelCustListEnd,
                   options: this._dateColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
@@ -265,12 +275,11 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                   options: this._multilineColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
-                PropertyPaneButton('numberTypeOfContent',{
-                  text: 'Validate List',
-                  buttonType: PropertyPaneButtonType.Hero,
-                  icon: 'Add',
-                  onClick: this._checkCustomList.bind(this)
-                })
+                PropertyPaneDropdown('custListAllDayEvent', {
+                  label: strings.LabelCustListAllDayEvent,
+                  options: this._yesnoColumnOptions,
+                  disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
+                }),
                 /*
                 PropertyPaneTextField('siteOther', {
                   label: strings.LabelSiteOther,

@@ -32,6 +32,7 @@ declare interface IModernEventsWebPartStrings {
   LabelCustListLocation:string;
   LabelCustListStart:string;
   LabelCustListEnd:string;
+  LabelCustListAllDayEvent:string;
   LabelCustListDescription:string;
   //Commandbar Labels
   LabelButtonNew: string;
