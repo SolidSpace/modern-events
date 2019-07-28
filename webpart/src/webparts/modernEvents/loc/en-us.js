@@ -1,5 +1,9 @@
 define([], function () {
   return {
+    //
+    "PPaneListPage": "Configure the SharePoint you want to use to display Data. You can use a Event List or Custom List.",
+    "PPaneDisplayOptionsPage": "Configure Display Options and the behavior of the Full Calendar",
+    //
     "PropertyPaneDescription": "A ModernUI Webpart to display and manage the SharePoint Event Lists.",
     "BasicGroupName": "Group Name",
     "DescriptionFieldLabel": "Description Field",
@@ -10,11 +14,14 @@ define([], function () {
     "LabelConfigBtnLabel": "Configure",
     // SiteGroups
     "SiteGroupName": "Site Settings",
+    "SiteGroupDataBinding": "Data Binding",
+    "SiteGroupCalDisplayOptions": "Display Options",
     "CommandbarGroupName": "Commandbar Settings",
     "DisplayGroupName": "Display Options",
     "InteractionGroupName": "Interactions",
     // Labels
     "LabelTimeFormat": "Display Timeformat",
+    "LabelWeekStart": "Start of Week",
     "LabelViewButtons": "View Buttons",
     "LabelSite": "Site",
     "LabelSiteOther": "Other Site Url (i.e. https://contoso.sharepoint.com/path)",
@@ -54,6 +61,15 @@ define([], function () {
     "TooltipSave": "Save",
     "TooltipDelete": "Delete",
     //Fullcalendar
-    "LabelAllDay": "all-day"
+    "LabelAllDay": "all-day",
+      //Event Panel ComboBox Values
+    "WeekDay0":"Sunday",
+    "WeekDay1":"Monday",
+    "WeekDay2":"Tuesday",
+    "WeekDay3":"Wednesday",
+    "WeekDay4":"Thursday",
+    "WeekDay5":"Friday",
+    "WeekDay6":"Saturday",
+
   }
 });

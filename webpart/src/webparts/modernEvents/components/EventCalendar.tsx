@@ -8,7 +8,7 @@ import { IFullCalendarEvent } from "./IFullCalendarEvent";
 import { ToolbarInput } from '@fullcalendar/core/types/input-types';
 import { DisplayType } from './ENUMDisplayType';
 import interactionPlugin from '@fullcalendar/interaction';
-import {IInteraction} from './CalendarApp';
+import {IInteraction,IDisplayOptions} from './CalendarApp';
 export interface IEventCalendarProps {
   cbSelectEntry: any;
   cbUpdateEvents: any;
@@ -18,6 +18,7 @@ export interface IEventCalendarProps {
   displayType?: DisplayType;
   timeformat: string;
   interactions:IInteraction;
+  displayOptions:IDisplayOptions;
 }
 
 export interface IEventCalendarState {
@@ -119,6 +120,7 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
         eventDragStart={this._eventDragtStart.bind(this)}
         eventDragStop={this._eventDragStop.bind(this)}
         eventDrop={this._eventDrop.bind(this)}
+        firstDay={parseInt(this.props.displayOptions.weekStartsAt)}
         slotLabelFormat={{
           hour12: (this.props.timeformat == '12h') ? true : false,
           hour: '2-digit',

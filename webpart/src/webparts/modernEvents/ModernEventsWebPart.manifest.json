@@ -27,7 +27,20 @@
       "viewList":true,
       "commandbar":true,
       "timeformat":"24h",
-      "interactionEventClick":true
+      "interactionEventClick":true,
+      "interactionEventDragDrop":true,
+      "weekStartsAt" :"1",
+      "listCfg":{
+          "siteOptions": [],
+          "listOptions": [],
+          "textColumnOptions": [],
+          "dateColumnOptions": [],
+          "multilineColumnOptions": [],
+          "categoryColumnOptions": [],
+          "yesnoColumnOptions": [],
+          "listDisabled":true,
+          "otherDisabled":true
+      }
     }
   }]
 }

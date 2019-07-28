@@ -1,6 +1,9 @@
 declare interface IModernEventsWebPartStrings {
   DescriptionFieldLabel: string;
-  PropertyPaneDescription: string; DescriptionFieldLabel: string;
+  PropertyPaneDescription: string;
+  DescriptionFieldLabel: string;
+  PPaneListPage: string;
+  PPaneDisplayOptionsPage: string;
   //Configure Texts and Labels
   LabelConfigIconName: string;
   LabelConfigIconText: string;
@@ -9,12 +12,15 @@ declare interface IModernEventsWebPartStrings {
   LabelConfigBtnLabel: string;
   // SiteGroups
   SiteGroupName: string;
+  SiteGroupDataBinding: string,
+  SiteGroupCalDisplayOptions: string,
   CommandbarGroupName: string;
   DisplayGroupName: string;
   InteractionGroupName: string;
   // Labels
   LabelViewButtons: string;
   LabelTimeformat: string;
+  LabelWeekStart: string;
   LabelSite: string;
   LabelSiteOther: string;
   LabelListTitle: string;
@@ -48,6 +54,15 @@ declare interface IModernEventsWebPartStrings {
   LabelEventStartDate: string;
   LabelEventEndDate: string;
   LabelEventDescription: string;
+  //Event Panel ComboBox Values
+  WeekDay0:string;
+  WeekDay1:string;
+  WeekDay2:string;
+  WeekDay3:string;
+  WeekDay4:string;
+  WeekDay5:string;
+  WeekDay6:string;
+  WeekDay7:string;
   //Tooltips
   TooltipCancel: string;
   TooltipEdit: string;

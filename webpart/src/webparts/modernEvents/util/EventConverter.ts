@@ -25,12 +25,30 @@ export class EventConverter {
 
     if (event.allDay) {
       spEvent.EventDate = moment(event.start).set({ h: 0, m: 0 }).format("YYYY-MM-DDTHH:mm:ss");
-      spEvent.EventDate = (event.end == null) ? moment(event.start).set({ h: 23, m: 59 }).format("YYYY-MM-DDTHH:mm:ss") : spEvent.EventDate;
+      spEvent.EndDate = (event.end == null) ? moment(event.start).set({ h: 23, m: 59 }).format("YYYY-MM-DDTHH:mm:ss") : spEvent.EndDate;
     } else {
       spEvent.EventDate = moment(event.start).format("YYYY-MM-DDTHH:mm:ss");
       spEvent.EndDate = moment(event.end).format("YYYY-MM-DDTHH:mm:ss");
     }
     return spEvent;
+  }
+
+  public static getCustomEvent(event: ISPEvent, fieldMap: IFieldMap): any {
+    if (fieldMap.isDefaultSchema) {
+      return event;
+    }else{
+      let spEvent = {};
+      spEvent['Id']=event.Id;
+      spEvent[fieldMap.Title]=event.Title;
+      spEvent[fieldMap.EventDate]=event.EventDate;
+      spEvent[fieldMap.EndDate]=event.EndDate;
+      spEvent[fieldMap.fAllDayEvent]=event.fAllDayEvent;
+      spEvent[fieldMap.Location]=event.Location;
+      spEvent[fieldMap.Category]=event.Category;
+      spEvent[fieldMap.Description]=event.Description;
+      return spEvent;
+    }
+
   }
 
   public static getFCEvent(event: ISPEvent, fieldMap: IFieldMap): IFullCalendarEvent {
@@ -54,13 +72,13 @@ export class EventConverter {
         id: event.Id,
         start: event[fieldMap.EventDate],
         end: EventConverter.tidyEndDate(event[fieldMap.EventDate], event[fieldMap.EndDate], true, 1),
-        allDay: (fieldMap.isDefaultSchema) ? event[fieldMap.fAllDayEvent] : ((fieldMap.fAllDayEvent = "1") ? true : false),
+        allDay: (event[fieldMap.fAllDayEvent] == "1") ? true : false,
         extendedProps: {
           location: event[fieldMap.Location],
           description: event[fieldMap.Description],
           category: event[fieldMap.Category]
         }
-      }
+      };
 
     }
     return fcEvent;

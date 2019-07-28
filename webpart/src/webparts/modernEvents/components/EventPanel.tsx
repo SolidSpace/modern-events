@@ -333,15 +333,19 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
     this.setState({isSaveInProgress:true});
 
     this.props.cbSave(this.state.event).then((result) => {
+      //result.data['Id']
       setTimeout(() => { }, 50);
       this.props.cbRefreshGrid();
+
       this.setState({
         ...this.state,
+        event:{...this.state.event,Id:parseInt(result.data['Id'])},
         isEditMode: !this.state.isEditMode,
-        isSaveInProgress:false
+        isSaveInProgress:false,
       });
 
     });
+
   }
 
   /**

@@ -20,6 +20,19 @@ import { IFieldMap } from   './components/IFieldMap';
 import { Feature } from '@pnp/sp/src/features';
 //import { RectangleEdge } from 'office-ui-fabric-react/lib/utilities/positioning';
 
+interface IDropDownValuesListCfg{
+   siteOptions: IPropertyPaneDropdownOption [];
+   listOptions: IPropertyPaneDropdownOption [];
+   textColumnOptions: IPropertyPaneDropdownOption[];
+   dateColumnOptions: IPropertyPaneDropdownOption[];
+   multilineColumnOptions: IPropertyPaneDropdownOption[];
+   categoryColumnOptions: IPropertyPaneDropdownOption[];
+   yesnoColumnOptions: IPropertyPaneDropdownOption[];
+   listDisabled:boolean;
+   otherDisabled:boolean;
+
+}
+
 export interface IModernEventsWebPartProps {
   site: string;
   siteOther: string;
@@ -40,18 +53,13 @@ export interface IModernEventsWebPartProps {
   interactionEventClick: boolean;
   interactionEventDragDrop: boolean;
   supportCustomList: boolean;
+  weekStartsAt:string;
+  listCfg:IDropDownValuesListCfg;
 
 }
 export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEventsWebPartProps> {
-  private _siteOptions: IPropertyPaneDropdownOption[] = [];
-  private _listOptions: IPropertyPaneDropdownOption[] = [];
-  private _textColumnOptions: IPropertyPaneDropdownOption[] = [];
-  private _dateColumnOptions: IPropertyPaneDropdownOption[] = [];
-  private _multilineColumnOptions: IPropertyPaneDropdownOption[] = [];
-  private _categoryColumnOptions: IPropertyPaneDropdownOption[] = [];
-  private _yesnoColumnOptions: IPropertyPaneDropdownOption[] = [];
-  private _listDisabled = true;
-  private _otherDisabled = true;
+  //private _siteOptions: IPropertyPaneDropdownOption[] = [];
+  //private _listOptions: IPropertyPaneDropdownOption[] = [];
 
   public render(): void {
     if (
@@ -61,7 +69,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
         this.properties.custListTitle && this.properties.custListLocation && this.properties.custListCategory && this.properties.custListDescription && this.properties.custListStart && this.properties.custListEnd && this.properties.custListAllDayEvent
       )
     ) {
-      let fieldMap:IFieldMap = (this. properties.supportCustomList)? {"isDefaultSchema":false,"EventDate":this.properties.custListStart,"EndDate":this.properties.custListEnd,"Title":this.properties.custListTitle,"fAllDayEvent":this.properties.custListAllDayEvent,"Description":this.properties.custListDescription,"Location":this.properties.custListDescription,"Category":this.properties.custListCategory}:{"isDefaultSchema":true,"EventDate":"EventDate","EndDate":"EndDate","Title":"Title","fAllDayEvent":"fAllDayEvent","Description":"Description","Location":"Location","Category":"Category"};
+      let fieldMap:IFieldMap = (this. properties.supportCustomList)? {"isDefaultSchema":false,"EventDate":this.properties.custListStart,"EndDate":this.properties.custListEnd,"Title":this.properties.custListTitle,"fAllDayEvent":this.properties.custListAllDayEvent,"Description":this.properties.custListDescription,"Location":this.properties.custListLocation,"Category":this.properties.custListCategory}:{"isDefaultSchema":true,"EventDate":"EventDate","EndDate":"EndDate","Title":"Title","fAllDayEvent":"fAllDayEvent","Description":"Description","Location":"Location","Category":"Category"};
 
       const app: React.ReactElement<ICalendarAppProps> = React.createElement(
         CalendarApp,
@@ -82,7 +90,8 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
           interactions: {
             dateClickNew: !this.properties.interactionEventClick ? this.properties.interactionEventClick : true,
             dragAndDrop: !this.properties.interactionEventDragDrop ? this.properties.interactionEventDragDrop : true
-          }
+          },
+          displayOptions:{weekStartsAt:this.properties.weekStartsAt}
         }
       );
       ReactDom.render(app, this.domElement);
@@ -121,12 +130,12 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
             sites.push({ key: sitesResult.value[_key]['Url'], text: sitesResult.value[_key]['Title'] });
           }
         }
-        this._siteOptions = sites;
+        this.properties.listCfg.siteOptions = sites;
         this.context.propertyPane.refresh();
         //let siteUrl = this.properties.site;
         if (this.properties.site) {
           con.getListTitlesByTemplate(this.properties.site, "100").then((listTitleResult) => {
-            this._listOptions = listTitleResult.value.map((list: ISPList) => {
+            this.properties.listCfg.listOptions = listTitleResult.value.map((list: ISPList) => {
               return {
                 key: list.Title,
                 text: list.Title
@@ -146,10 +155,10 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
 
   protected onPropertyPaneFieldChanged(propertyPath: string, oldValue: any, newValue: any): void {
     if (newValue == 'other') {
-      this._otherDisabled = false;
+      this.properties.listCfg.otherDisabled = false;
       this.properties.listTitle = null;
     } else if (oldValue === 'other' && newValue != 'other') {
-      this._otherDisabled = true;
+      this.properties.listCfg.otherDisabled = true;
       this.properties.siteOther = null;
       this.properties.listTitle = null;
     } else if (propertyPath == 'supportCustomList') {
@@ -158,16 +167,16 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
     let con: SiteConnector = new SiteConnector(this.context);
     if (
       ((propertyPath === 'site' || propertyPath === 'other') && newValue) || (propertyPath == 'supportCustomList')) {
-      this._listDisabled = true;
+      this.properties.listCfg.listDisabled = true;
       let listType: string = this.properties.supportCustomList ? "100" : "106";
       con.getListTitlesByTemplate(this.properties.site, listType).then((listTitleResult) => {
-        this._listOptions = listTitleResult.value.map((list: ISPList) => {
+        this.properties.listCfg.listOptions = listTitleResult.value.map((list: ISPList) => {
           return {
             key: list.Title,
             text: list.Title
           };
         });
-        this._listDisabled = false;
+        this.properties.listCfg.listDisabled = false;
         this.context.propertyPane.refresh();
         this.render();
       });
@@ -176,26 +185,27 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
       if (isCustomList) {
         const _that = this;
         con.getEventListColumns(this.properties.listTitle, this.properties.site).then((columns) => {
-          this._dateColumnOptions = [];
-          this._textColumnOptions = [];
-          this._categoryColumnOptions = [];
-          this._multilineColumnOptions = [];
+          this.properties.listCfg.dateColumnOptions = [];
+          this.properties.listCfg.textColumnOptions = [];
+          this.properties.listCfg.categoryColumnOptions = [];
+          this.properties.listCfg.multilineColumnOptions = [];
+          this.properties.listCfg.yesnoColumnOptions = [];
           columns.value.forEach(element => {
             switch (element.FieldTypeKind) {
               case 2:
-                this._textColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
+                this.properties.listCfg.textColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
                 break;
               case 3:
-                this._multilineColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
+                this.properties.listCfg.multilineColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
                 break;
               case 4:
-                this._dateColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
+                this.properties.listCfg.dateColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
                 break;
               case 6:
-                this._categoryColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
+                this.properties.listCfg.categoryColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
                 break;
               case 8:
-                this._yesnoColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
+                this.properties.listCfg.yesnoColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
                 break;
             }
           });
@@ -216,21 +226,22 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
   private _checkCustomList() {
     console.log('click');
   }
-
+  //PPaneDisplayOptionsPage
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
       pages: [
         {
           header: {
-            description: strings.PropertyPaneDescription
+            description: strings.PPaneListPage
           },
           groups: [
             {
-              groupName: strings.SiteGroupName,
+              groupName: strings.SiteGroupDataBinding,
               groupFields: [
                 PropertyPaneDropdown('site', {
                   label: strings.LabelSite,
-                  options: this._siteOptions
+                  options: this.properties.listCfg.siteOptions,
+
                 }),
                 PropertyPaneCheckbox('supportCustomList', {
                   text: strings.LabelUseCustomList,
@@ -239,45 +250,45 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                 }),
                 PropertyPaneDropdown('listTitle', {
                   label: strings.LabelListTitle,
-                  options: this._listOptions,
-                  disabled: this._listDisabled
+                  options: this.properties.listCfg.listOptions,
+                  disabled: this.properties.listCfg.listDisabled
                 }),
                 PropertyPaneLabel('', {
                   text: strings.LabelCustListFieldMap
                 }),
                 PropertyPaneDropdown('custListTitle', {
                   label: strings.LabelCustListTitle,
-                  options: this._textColumnOptions,
+                  options: this.properties.listCfg.textColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
                 PropertyPaneDropdown('custListCategory', {
                   label: strings.LabelCustListCategory,
-                  options: this._categoryColumnOptions,
+                  options: this.properties.listCfg.categoryColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
                 PropertyPaneDropdown('custListLocation', {
                   label: strings.LabelCustListLocation,
-                  options: this._textColumnOptions,
+                  options: this.properties.listCfg.textColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
                 PropertyPaneDropdown('custListStart', {
                   label: strings.LabelCustListStart,
-                  options: this._dateColumnOptions,
+                  options: this.properties.listCfg.dateColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
                 PropertyPaneDropdown('custListEnd', {
                   label: strings.LabelCustListEnd,
-                  options: this._dateColumnOptions,
+                  options: this.properties.listCfg.dateColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
                 PropertyPaneDropdown('custListDescription', {
                   label: strings.LabelCustListDescription,
-                  options: this._multilineColumnOptions,
+                  options: this.properties.listCfg.multilineColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
                 PropertyPaneDropdown('custListAllDayEvent', {
                   label: strings.LabelCustListAllDayEvent,
-                  options: this._yesnoColumnOptions,
+                  options: this.properties.listCfg.yesnoColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
                 /*
@@ -288,14 +299,35 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
 
                 }),*/
               ]
-            },
+            }
+          ]
+        },
+        {
+          header: {
+            description: strings.PPaneDisplayOptionsPage
+          },
+          groups: [
             {
-              groupName: strings.DisplayGroupName,
+              groupName: strings.SiteGroupCalDisplayOptions,
               groupFields: [
                 PropertyPaneDropdown('timeformat', {
                   selectedKey: "24h",
                   label: strings.LabelTimeformat,
                   options: [{ key: '24h', text: '24 Hours' }, { key: '12h', text: '12 Hours AM/PM' }],
+                  disabled: false
+                }),
+                PropertyPaneDropdown('weekStartsAt', {
+                  selectedKey: "1",
+                  label: strings.LabelTimeformat,
+                  options: [
+                    { key: '0', text: strings.WeekDay0 },
+                    { key: '1', text: strings.WeekDay1 },
+                    { key: '2', text: strings.WeekDay2 },
+                    { key: '3', text: strings.WeekDay3 },
+                    { key: '4', text: strings.WeekDay4 },
+                    { key: '5', text: strings.WeekDay5 },
+                    { key: '6', text: strings.WeekDay6 },
+                  ],
                   disabled: false
                 })
               ]
@@ -316,7 +348,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
               ]
             },
             {
-              groupName: strings.CommandbarGroupName,
+              groupName: strings.SiteGroupCalDisplayOptions,
               groupFields: [
                 PropertyPaneCheckbox('commandbar', {
                   text: strings.LabelCommandbar,
@@ -339,7 +371,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                   text: strings.LabelViewList,
                   checked: false,
                   disabled: !this.properties.commandbar
-                }),
+                })
               ]
             }
           ]
