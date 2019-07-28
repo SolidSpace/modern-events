@@ -37,6 +37,10 @@ export class SiteConnector{
       });
   }
 
+  /**
+   * Query All Lists from a Site
+   * @param site
+   */
   public getListTitles(site: string): Promise<ISPLists> {
     return this.context.spHttpClient.get(site + `/_api/web/lists?$filter=Hidden eq false and BaseType eq 0`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
@@ -44,6 +48,22 @@ export class SiteConnector{
       });
   }
 
+  public getListTitlesByTemplate(site: string,templateId:string): Promise<ISPLists> {
+    return this.context.spHttpClient.get(site + `/_api/web/lists?$filter=Hidden eq false and BaseTemplate eq `+templateId, SPHttpClient.configurations.v1)
+      .then((response: SPHttpClientResponse) => {
+        return response.json();
+      });
+  }
+
+//"BaseTemplate": 106 = Calendar List
+//"BaseTemplate": 100 = Custom List
+
+
+  /**
+   * Query All Columns from a List
+   * @param listNameColumns
+   * @param listsite
+   */
   public getListColumns(listNameColumns: string,listsite: string): Promise<any> {
     return this.context.spHttpClient.get(listsite + `/_api/web/lists/GetByTitle('${listNameColumns}')/Fields?$filter=Hidden eq false and ReadOnlyField eq false`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
@@ -51,6 +71,27 @@ export class SiteConnector{
       });
   }
 
+  /**
+   * Query following List Columns necessary for Event Mapping
+   * FieldTypeKind	:	2 = Text
+   * FieldTypeKind	:	4 = DateTime
+   * FieldTypeKind	:	3 = Multiline
+   * @param listNameColumns
+   * @param listsite
+   */
+  public getEventListColumns(listNameColumns: string,listsite: string): Promise<any> {
+    return this.context.spHttpClient.get(listsite + `/_api/web/lists/GetByTitle('${listNameColumns}')/Fields?$filter=Hidden eq false and ReadOnlyField eq false and (FieldTypeKind eq 2 or FieldTypeKind eq 3 or FieldTypeKind eq 4 or FieldTypeKind eq 6 or FieldTypeKind eq 8)`, SPHttpClient.configurations.v1)
+      .then((response: SPHttpClientResponse) => {
+        return response.json();
+      });
+  }
+
+  /**
+   *
+   * @param columnName
+   * @param listNameColumns
+   * @param listsite
+   */
   public getColumnOptions(columnName:string,listNameColumns: string,listsite: string): Promise<any> {
     return this.context.spHttpClient.get(listsite + `/_api/web/lists/GetByTitle('${listNameColumns}')/Fields?$filter=EntityPropertyName eq '${columnName}'`, SPHttpClient.configurations.v1)
     .then((response: SPHttpClientResponse) => {

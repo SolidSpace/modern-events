@@ -3,7 +3,11 @@
   "solution": {
     "name": "Modern Events",
     "id": "d33c6234-df3c-4be1-90ae-491913288e92",
+<<<<<<< HEAD
     "version": "1.0.0.7",
+=======
+    "version": "2.0.0.2",
+>>>>>>> Version-2
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false

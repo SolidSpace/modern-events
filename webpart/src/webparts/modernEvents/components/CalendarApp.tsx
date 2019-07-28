@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
+import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
+import { MockupData } from "./MockupData";
 import { CalendarCommandbar } from './CalendarCommandbar';
 import { DisplayType } from './ENUMDisplayType';
 import { EventCalendar } from "./EventCalendar";
@@ -14,8 +16,19 @@ import { EventConverter } from "../util/EventConverter";
 import { ISPEvent } from './ISPEvent';
 import { ItemUpdateResult, ItemAddResult } from '@pnp/sp';
 import { ICBButtonVisibility } from "./ICBButtonVisibility";
+import { IFieldMap } from   './IFieldMap';
+import ModernEventsWebPart from '../ModernEventsWebPart';
+export interface IInteraction{
+  dateClickNew:boolean;
+  dragAndDrop:boolean;
+}
+
+export interface IDisplayOptions{
+  weekStartsAt:string;
+}
 
 export interface ICalendarAppProps {
+  fieldMapping:IFieldMap;
   context: any;
   listName: string;
   remoteSiteUrl: string;
@@ -24,6 +37,8 @@ export interface ICalendarAppProps {
   commandBarButtonVisibility: ICBButtonVisibility;
   commandBarVisible:boolean;
   timeformat:string;
+  interactions:IInteraction;
+  displayOptions:IDisplayOptions;
 }
 
 export interface ICalendarAppState {
@@ -59,7 +74,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     this.props.context.propertyPane.open();
   }
   public componentWillReceiveProps(nextProps: ICalendarAppProps) {
-    //console.log(nextProps);
+    console.log(nextProps);
     let displayDate: Date = this.eventCalRef.current.getDisplayDate();
     displayDate = displayDate ? displayDate : new Date();
 
@@ -83,6 +98,10 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                       cbUpdateEvents={this._queryEvents.bind(this)}
                       events={calEvents}
                       timeformat={this.props.timeformat}
+                      cbNewEvent={this._newEntry.bind(this)}
+                      cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                      interactions={nextProps.interactions}
+                      displayOptions={nextProps.displayOptions}
                       >
                       </EventCalendar>
         });
@@ -109,6 +128,10 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                       cbUpdateEvents={this._queryEvents.bind(this)}
                       events={calEvents}
                       timeformat={this.props.timeformat}
+                      cbNewEvent={this._newEntry.bind(this)}
+                      cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                      interactions={this.props.interactions}
+                      displayOptions={this.props.displayOptions}
                       >
                       </EventCalendar>
         });
@@ -123,6 +146,10 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                     cbUpdateEvents={this._queryEvents.bind(this)}
                     events={[]}
                     timeformat={this.props.timeformat}
+                    cbNewEvent={this._newEntry.bind(this)}
+                    cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                    interactions={this.props.interactions}
+                    displayOptions={this.props.displayOptions}
                     ></EventCalendar>
       });
     }
@@ -171,6 +198,10 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
             cbUpdateEvents={this._queryEvents.bind(this)}
             events={events}
             timeformat={this.props.timeformat}
+            cbNewEvent={this._newEntry.bind(this)}
+            cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+            interactions={this.props.interactions}
+            displayOptions={this.props.displayOptions}
           ></EventCalendar>
       }
       );
@@ -182,7 +213,12 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
   /**
    * Activates the Event Panel in edit mode to display Input Form
    */
-  private _newEntry() {
+  private _newEntry(newDate:string) {
+    if(!this. props.interactions.dateClickNew && typeof newDate=='string'){
+      return;
+    }else if(typeof newDate!='string'){
+      newDate=null;
+    }
     this.setState({
       panel: <EventPanel
         cbRefreshGrid={this._updateGrid.bind(this)}
@@ -194,6 +230,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
         relativeLibOrListUrl={this.props.relativeLibOrListUrl}
         remoteSiteUrl={this.props.remoteSiteUrl}
         timeformat={this.props.timeformat}
+        newDateStr={newDate}
       ></EventPanel>
     });
   }
@@ -212,6 +249,15 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     });
   }
 
+  private _dragDropUpdateEvent(event:IFullCalendarEvent){
+    let spEvent:ISPEvent = EventConverter.getSPEvent(event);
+    this._saveChanges(spEvent).then((result)=>{
+      setTimeout(() => { }, 50);
+      this._updateGrid();
+    });
+
+
+  }
 
 
   /**
@@ -220,10 +266,21 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
    */
   private _saveChanges(event: ISPEvent): Promise<ItemUpdateResult | ItemAddResult> {
     let con = new PnPListConnector(this.props.listName, this.props.context, this.props.remoteSiteUrl);
-    if (!event.Id) {
-      return con.addIem(event);
+    let spEvent = EventConverter.getCustomEvent(event,this.props.fieldMapping);
+    if (!spEvent.Id) {
+      return con.addIem(spEvent).then((result)=>{
+        return result;
+      }).catch((error)=>{
+        console.log(error);
+        return error;
+      });
     } else {
-      return con.updateItem(event.Id, event);
+      return con.updateItem(spEvent.Id, spEvent).then((result)=>{
+        return result;
+      }).catch((error)=>{
+        console.log(error);
+        return error;
+      });
     }
 
   }
@@ -237,6 +294,10 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                     cbUpdateEvents={this._queryEvents.bind(this)}
                     events={calEvents}
                     timeformat={this.props.timeformat}
+                    cbNewEvent={this._newEntry.bind(this)}
+                    cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                    interactions={this.props.interactions}
+                    displayOptions={this.props.displayOptions}
                     ></EventCalendar>
       });
     }).catch((error) => {
@@ -253,7 +314,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     if (!listName || !relativeLibOrListUrl) { return Promise.resolve([]); }
     let con = new PnPListConnector(this.props.listName, this.props.context, this.props.remoteSiteUrl);
     let siteCon: SiteConnector = new SiteConnector(this.props.context);
-    siteCon.getColumnOptions("Category", listName, remoteSiteUrl).then((categories) => {
+
+    siteCon.getColumnOptions(this.props.fieldMapping.Category, listName, remoteSiteUrl).then((categories) => {
       let categoryValues = categories.value[0].Choices.map((item) => {
         return {
           key: item,
@@ -273,14 +335,20 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
         break;
     }
     var camlBuilder = new CamlBuilder();
+    /*
     var caml: string = camlBuilder.Where()
       .DateField("EventDate").GreaterThan(moment(startDate).toDate())
       .And()
       .DateField("EndDate").LessThanOrEqualTo(moment(endDate).toDate()).ToString();
+    */
+   var caml: string = camlBuilder.Where()
+   .DateField(this.props.fieldMapping["EventDate"]).GreaterThan(moment(startDate).toDate())
+   .And()
+   .DateField(this.props.fieldMapping["EndDate"]).LessThanOrEqualTo(moment(endDate).toDate()).ToString();
     caml = `<View>${caml}</View>`;
     return con.getItemByCAML(listName, { ViewXml: caml }).then((result) => {
       let calEvents = result.map((event) => {
-        return EventConverter.getFCEvent(event);
+        return EventConverter.getFCEvent(event,this.props.fieldMapping);
       });
       return Promise.resolve(calEvents);
     }).catch((error) => {

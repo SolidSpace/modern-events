@@ -29,6 +29,7 @@ export interface IEventPanelProps {
   event?: IFullCalendarEvent;
   createNew?: boolean;
   timeformat: string;
+  newDateStr?:string;
 }
 
 export interface IEventPanelState {
@@ -54,13 +55,15 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
         isSaveInProgress:false
       };
     } else {
+      let eventDate = this.props.newDateStr?moment(this.props.newDateStr+"00:00:00","YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DDTHH:mm:ss"): moment().format("YYYY-MM-DDTHH:mm:ss");
+
       this.state = {
         isEditMode: true,
         isOpen: true,
         isDialogOpen: false,
         event: {
-          EventDate: moment().format("YYYY-MM-DDTHH:mm:ss"),
-          EndDate: moment().add(1, 'hour').format("YYYY-MM-DDTHH:mm:ss"),
+          EventDate: eventDate, // moment().format("YYYY-MM-DDTHH:mm:ss"),
+          EndDate: moment(eventDate).add(1, 'hour').format("YYYY-MM-DDTHH:mm:ss"), //moment().add(1, 'hour').format("YYYY-MM-DDTHH:mm:ss"),
           Title: "New Event",
           fAllDayEvent: false,
           Location: "",
@@ -80,12 +83,13 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
    */
   public componentWillReceiveProps(nextProps: IEventPanelProps) {
     if (nextProps.createNew) {
+      let eventDate = nextProps.newDateStr?moment(nextProps.newDateStr+"00:00:00","YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DDTHH:mm:ss"): moment().format("YYYY-MM-DDTHH:mm:ss");
       this.setState({
         isEditMode: true,
         isOpen: true,
         event: {
-          EventDate: moment().format("YYYY-MM-DDTHH:mm:ss"),
-          EndDate: moment().add(1, 'hour').format("YYYY-MM-DDTHH:mm:ss"),
+          EventDate: eventDate, // moment().format("YYYY-MM-DDTHH:mm:ss"),
+          EndDate: moment(eventDate).add(1, 'hour').format("YYYY-MM-DDTHH:mm:ss"), //moment().add(1, 'hour').format("YYYY-MM-DDTHH:mm:ss"),
           Title: "New Event",
           fAllDayEvent: false,
           Location: "",
@@ -329,15 +333,19 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
     this.setState({isSaveInProgress:true});
 
     this.props.cbSave(this.state.event).then((result) => {
+      //result.data['Id']
       setTimeout(() => { }, 50);
       this.props.cbRefreshGrid();
+
       this.setState({
         ...this.state,
+        event:{...this.state.event,Id:parseInt(result.data['Id'])},
         isEditMode: !this.state.isEditMode,
-        isSaveInProgress:false
+        isSaveInProgress:false,
       });
 
     });
+
   }
 
   /**
