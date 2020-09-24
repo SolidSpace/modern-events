@@ -15,11 +15,7 @@ export class EventConverter {
     let spEvent =   {
       Id: event.id,
       EventDate: event.start,
-<<<<<<< HEAD
-      EndDate: EventConverter.tidyEndDate(event.start,event.end,false,1),
-=======
       EndDate: EventConverter.tidyEndDate(event.start, event.end, false, 1),
->>>>>>> Version-2
       Title: event.title,
       fAllDayEvent: event.allDay,
       Description: event.extendedProps.description,
@@ -29,11 +25,7 @@ export class EventConverter {
 
     if (event.allDay) {
       spEvent.EventDate = moment(event.start).set({ h: 0, m: 0 }).format("YYYY-MM-DDTHH:mm:ss");
-<<<<<<< HEAD
-      spEvent.EventDate = (event.end==null)?moment(event.start).set({ h: 23, m: 59 }).format("YYYY-MM-DDTHH:mm:ss"):spEvent.EventDate ;
-=======
       spEvent.EndDate = (event.end == null) ? moment(event.start).set({ h: 23, m: 59 }).format("YYYY-MM-DDTHH:mm:ss") : spEvent.EndDate;
->>>>>>> Version-2
     } else {
       spEvent.EventDate = moment(event.start).format("YYYY-MM-DDTHH:mm:ss");
       spEvent.EndDate = moment(event.end).format("YYYY-MM-DDTHH:mm:ss");
@@ -41,21 +33,6 @@ export class EventConverter {
     return spEvent;
   }
 
-<<<<<<< HEAD
-  public static getFCEvent(event: ISPEvent): IFullCalendarEvent {
-    let fcEvent:IFullCalendarEvent = {
-      title: event.Title,
-      id: event.Id,
-      start: event.EventDate,
-      end: EventConverter.tidyEndDate(event.EventDate,event.EndDate,true,1),
-      allDay: event.fAllDayEvent,
-      extendedProps: {
-        location: event.Location,
-        description: event.Description,
-        category: event.Category
-      }
-    };
-=======
   public static getCustomEvent(event: ISPEvent, fieldMap: IFieldMap): any {
     if (fieldMap.isDefaultSchema) {
       return event;
@@ -104,7 +81,6 @@ export class EventConverter {
       };
 
     }
->>>>>>> Version-2
     return fcEvent;
   }
   /**
@@ -118,17 +94,10 @@ export class EventConverter {
    * An event with the end of 2018-09-03 will appear to span through the 2nd of the month,
    * but will end before the start of the 3rd of the month.
    */
-<<<<<<< HEAD
-  public static tidyEndDate(startDate:string,endDate:string,addDays:boolean,days:number):string{
-    if(moment(endDate,"YYYY-MM-DDTHH:mm:ss").set({ h: 0, m: 0 }).isAfter(moment(startDate,"YYYY-MM-DDTHH:mm:ss").set({ h: 0, m: 0 }))){
-      return (addDays)?moment(endDate, "YYYY-MM-DDTHH:mm:ss").add(days, 'days').format("YYYY-MM-DDTHH:mm:ss"):moment(endDate, "YYYY-MM-DDTHH:mm:ss").subtract(days, 'days').format("YYYY-MM-DDTHH:mm:ss");
-    }else{
-=======
   public static tidyEndDate(startDate: string, endDate: string, addDays: boolean, days: number): string {
     if (moment(endDate, "YYYY-MM-DDTHH:mm:ss").set({ h: 0, m: 0 }).isAfter(moment(startDate, "YYYY-MM-DDTHH:mm:ss").set({ h: 0, m: 0 }))) {
       return (addDays) ? moment(endDate, "YYYY-MM-DDTHH:mm:ss").add(days, 'days').format("YYYY-MM-DDTHH:mm:ss") : moment(endDate, "YYYY-MM-DDTHH:mm:ss").subtract(days, 'days').format("YYYY-MM-DDTHH:mm:ss");
     } else {
->>>>>>> Version-2
       return endDate;
     }
   }

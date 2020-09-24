@@ -101,33 +101,6 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
 
 
     return (
-<<<<<<< HEAD
-          <FullCalendar
-            ref={this.calRef}
-            defaultView={defaultView}
-            plugins={plugins}
-            themeSystem="standard"
-            events={this.state.events}
-            defaultDate={this.state.currentDate?this.state.currentDate:new Date()}
-            eventClick={this._eventClick.bind(this)}
-            eventMouseEnter={this._eventMouseEnter.bind(this)}
-            eventMouseLeave={this._eventMouseLeave.bind(this)}
-            customButtons={btn}
-            header={header}
-            dateClick={this._dateClick.bind(this)}
-            slotLabelFormat={ {
-              hour12: (this.props.timeformat=='12h')?true:false,
-              hour: '2-digit',
-              minute: '2-digit',
-            }}
-            eventTimeFormat={ {
-              hour12: (this.props.timeformat=='12h')?true:false,
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit'
-            }}
-          />
-=======
       <FullCalendar
         allDayText={strings.LabelAllDay}
         ref={this.calRef}
@@ -160,7 +133,6 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
           second: '2-digit'
         }}
       />
->>>>>>> Version-2
     );
   }
   private _eventDragtStart(event: any) {
