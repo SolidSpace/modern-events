@@ -342,6 +342,7 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
         event:{...this.state.event,Id:parseInt(result.data['Id'])},
         isEditMode: !this.state.isEditMode,
         isSaveInProgress:false,
+        isOpen:false
       });
 
     });
