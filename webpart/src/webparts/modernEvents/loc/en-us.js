@@ -12,10 +12,14 @@ define([], function () {
     "LabelConfigIconText": "Configure your web part",
     "LabelConfigIconDescription": "Please configure the web part.",
     "LabelConfigBtnLabel": "Configure",
+    "LabeloverlayListData":"Additional Lists",
+    "LabeloverlayListDataPanelHeader":"Configure addional read only Lists to show in this Calendar",
+    "LabeloverlayListDataManageBtn":"configure",
     // SiteGroups
     "SiteGroupName": "Site Settings",
     "SiteGroupDataBinding": "Data Binding",
     "SiteGroupCalDisplayOptions": "Display Options",
+    "SiteGroupListOverlays":"Other Lists Overlays",
     "CommandbarGroupName": "Commandbar Settings",
     "DisplayGroupName": "Display Options",
     "InteractionGroupName": "Interactions",
@@ -70,6 +74,8 @@ define([], function () {
     "WeekDay4":"Thursday",
     "WeekDay5":"Friday",
     "WeekDay6":"Saturday",
-
+    //Callouts
+    //Callouts
+    "CallOutListOverlayEnable":"Enable this Option to show Data from additional Lists on Calendar"
   }
 });

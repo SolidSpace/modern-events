@@ -39,6 +39,8 @@ export interface ICalendarAppProps {
   timeformat:string;
   interactions:IInteraction;
   displayOptions:IDisplayOptions;
+  overlayListCollection?: any[];
+  isListOverviewEnabled?: boolean;
 }
 
 export interface ICalendarAppState {
@@ -50,6 +52,10 @@ export interface ICalendarAppState {
   categories?: any[];
 }
 
+export interface IListOverlayCfg{
+  isEnabled:boolean;
+  collection:any[];
+}
 
 export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarAppState> {
   private eventCalRef: React.RefObject<EventCalendar>;
@@ -135,6 +141,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                       >
                       </EventCalendar>
         });
+        this._queryOverlayDataSources(this.state.displayType, displayDate );
         console.log(calEvents);
       });
     } else {
@@ -152,7 +159,9 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                     displayOptions={this.props.displayOptions}
                     ></EventCalendar>
       });
+      this._queryOverlayDataSources(this.state.displayType, displayDate );
     }
+
   }
 
   public render(): React.ReactElement<ICalendarAppProps> {
@@ -286,7 +295,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
   }
 
   private _updateGrid() {
-    this._queryEvents(this.state.displayType, this.eventCalRef.current.getDisplayDate()).then((calEvents) => {
+  this._queryOverlayDataSources(this.state.displayType, this.eventCalRef.current.getDisplayDate() );
+  this._queryEvents(this.state.displayType, this.eventCalRef.current.getDisplayDate()).then((calEvents) => {
       this.setState({
         content: <EventCalendar
                     ref={this.eventCalRef}
@@ -301,13 +311,40 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                     ></EventCalendar>
       });
     }).catch((error) => {
-
+      console.error(error);
     });
   }
 
-  private _queryEvents(displayType: DisplayType, currentDisplayDate: Date, nextProps?: ICalendarAppProps): Promise<any> {
-    let startDate;
-    let endDate;
+  private _queryOverlayDataSources(displayType: DisplayType, currentDisplayDate: Date, nextProps?: ICalendarAppProps){
+    this.eventCalRef.current.removeAllEventSources();
+    this.props.overlayListCollection.forEach((listConfig,index)=>{
+      let con = new PnPListConnector(listConfig.SiteUrl, null, listConfig.ListName);
+
+      this._queryEventList(con,listConfig.ListName,displayType,currentDisplayDate).then((overlayEvents)=>{
+        var eventSource:any = {
+          id:index,
+          events: [
+            {
+              title: 'Event1',
+              start: '2020-11-04'
+            },
+            {
+              title: 'Event2',
+              start: '2020-11-05'
+            }
+          ],
+          color: listConfig.BackgroundColor,   // an option!
+          textColor: listConfig.TextColor // an option!
+        }
+        this.eventCalRef.current.addEventSource(eventSource);
+      }).catch(error=>{
+        console.error("Cannot Query Overlay Events")
+      });
+    });
+  }
+
+
+  private _queryEvents(displayType: DisplayType, currentDisplayDate: Date, nextProps?: ICalendarAppProps,skipColumnOptions?:boolean): Promise<any> {
     let listName = nextProps ? nextProps.listName : this.props.listName;
     let relativeLibOrListUrl = nextProps ? nextProps.relativeLibOrListUrl : this.props.relativeLibOrListUrl;
     let remoteSiteUrl = nextProps ? nextProps.remoteSiteUrl : this.props.remoteSiteUrl;
@@ -324,6 +361,9 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
       });
       this.setState({ categories: categoryValues });
     });
+/*
+    let startDate;
+    let endDate;
     switch (+displayType) {
       case DisplayType.WeekGrid:
         startDate = moment(currentDisplayDate).startOf('month').format("YYYY-MM-DD");
@@ -334,13 +374,38 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
         endDate = moment(currentDisplayDate).endOf('week').format("YYYY-MM-DD");
         break;
     }
-    var camlBuilder = new CamlBuilder();
-    /*
-    var caml: string = camlBuilder.Where()
-      .DateField("EventDate").GreaterThan(moment(startDate).toDate())
-      .And()
-      .DateField("EndDate").LessThanOrEqualTo(moment(endDate).toDate()).ToString();
+   var camlBuilder = new CamlBuilder();
+   var caml: string = camlBuilder.Where()
+   .DateField(this.props.fieldMapping["EventDate"]).GreaterThan(moment(startDate).toDate())
+   .And()
+   .DateField(this.props.fieldMapping["EndDate"]).LessThanOrEqualTo(moment(endDate).toDate()).ToString();
+    caml = `<View>${caml}</View>`;
+    return con.getItemByCAML(listName, { ViewXml: caml }).then((result) => {
+      let calEvents = result.map((event) => {
+        return EventConverter.getFCEvent(event,this.props.fieldMapping);
+      });
+      return Promise.resolve(calEvents);
+    }).catch((error) => {
+      Promise.reject(error);
+    });
     */
+   return this._queryEventList(con,listName,displayType,currentDisplayDate);
+  }
+
+  private _queryEventList(con:PnPListConnector,listName:string,displayType: DisplayType, currentDisplayDate: Date): Promise<any>{
+    let startDate;
+    let endDate;
+    switch (+displayType) {
+      case DisplayType.WeekGrid:
+        startDate = moment(currentDisplayDate).startOf('month').format("YYYY-MM-DD");
+        endDate = moment(currentDisplayDate).endOf('month').format("YYYY-MM-DD");
+        break;
+      default:
+        startDate = moment(currentDisplayDate).startOf('week').format("YYYY-MM-DD");
+        endDate = moment(currentDisplayDate).endOf('week').format("YYYY-MM-DD");
+        break;
+    }
+   var camlBuilder = new CamlBuilder();
    var caml: string = camlBuilder.Where()
    .DateField(this.props.fieldMapping["EventDate"]).GreaterThan(moment(startDate).toDate())
    .And()
@@ -355,6 +420,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
       Promise.reject(error);
     });
   }
+
 
   private _selectedEntry(entry: IFullCalendarEvent) {
     this.setState({

@@ -23,6 +23,7 @@
     "@microsoft/sp-property-pane": "1.8.2",
     "@microsoft/sp-webpart-base": "1.8.2",
     "@pnp/spfx-controls-react": "1.13.1",
+    "@pnp/spfx-property-controls": "2.1.1",
     "@types/camljs": "0.0.31",
     "@types/es6-promise": "0.0.33",
     "@types/react": "16.7.22",

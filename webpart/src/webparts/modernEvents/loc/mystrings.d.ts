@@ -4,16 +4,21 @@ declare interface IModernEventsWebPartStrings {
   DescriptionFieldLabel: string;
   PPaneListPage: string;
   PPaneDisplayOptionsPage: string;
+  PPaneListOverlayPage: string;
   //Configure Texts and Labels
   LabelConfigIconName: string;
   LabelConfigIconText: string;
   LabelConfigIconName: string;
   LabelConfigIconDescription: string;
   LabelConfigBtnLabel: string;
+  LabeloverlayListData:string;
+  LabeloverlayListDataPanelHeader:string;
+  LabeloverlayListDataManageBtn:string;
   // SiteGroups
   SiteGroupName: string;
   SiteGroupDataBinding: string,
   SiteGroupCalDisplayOptions: string,
+  SiteGroupListOverlays:string;
   CommandbarGroupName: string;
   DisplayGroupName: string;
   InteractionGroupName: string;
@@ -70,6 +75,8 @@ declare interface IModernEventsWebPartStrings {
   TooltipDelete: string;
   //Fullcalendar
   LabelAllDay: string;
+  //CallOuts
+  CallOutListOverlayEnable:string;
 }
 
 declare module 'ModernEventsWebPartStrings' {

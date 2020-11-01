@@ -2,10 +2,11 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Version } from '@microsoft/sp-core-library';
-import { BaseClientSideWebPart, IPropertyPaneDropdownOption, PropertyPaneDropdown, PropertyPaneCheckbox, PropertyPaneLabel, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-webpart-base';
+import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import {
   IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  PropertyPaneTextField,
+  IPropertyPaneDropdownOption, PropertyPaneDropdown, PropertyPaneCheckbox, PropertyPaneLabel, PropertyPaneButton, PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
 import { Placeholder, IPlaceholderProps } from "@pnp/spfx-controls-react/lib/Placeholder";
 import * as strings from 'ModernEventsWebPartStrings';
@@ -16,20 +17,24 @@ import { DisplayType } from './components/ENUMDisplayType';
 //import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
 import { SiteConnector, ISPList } from './services/SiteConnector';
 import { string } from 'prop-types';
-import { IFieldMap } from   './components/IFieldMap';
+import { IFieldMap } from './components/IFieldMap';
 import { Feature } from '@pnp/sp/src/features';
 //import { RectangleEdge } from 'office-ui-fabric-react/lib/utilities/positioning';
+import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
+import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
+import { CalloutTriggers } from '@pnp/spfx-property-controls/lib/Callout';
+import { PropertyFieldCheckboxWithCallout } from '@pnp/spfx-property-controls/lib/PropertyFieldCheckboxWithCallout';
 
-interface IDropDownValuesListCfg{
-   siteOptions: IPropertyPaneDropdownOption [];
-   listOptions: IPropertyPaneDropdownOption [];
-   textColumnOptions: IPropertyPaneDropdownOption[];
-   dateColumnOptions: IPropertyPaneDropdownOption[];
-   multilineColumnOptions: IPropertyPaneDropdownOption[];
-   categoryColumnOptions: IPropertyPaneDropdownOption[];
-   yesnoColumnOptions: IPropertyPaneDropdownOption[];
-   listDisabled:boolean;
-   otherDisabled:boolean;
+interface IDropDownValuesListCfg {
+  siteOptions: IPropertyPaneDropdownOption[];
+  listOptions: IPropertyPaneDropdownOption[];
+  textColumnOptions: IPropertyPaneDropdownOption[];
+  dateColumnOptions: IPropertyPaneDropdownOption[];
+  multilineColumnOptions: IPropertyPaneDropdownOption[];
+  categoryColumnOptions: IPropertyPaneDropdownOption[];
+  yesnoColumnOptions: IPropertyPaneDropdownOption[];
+  listDisabled: boolean;
+  otherDisabled: boolean;
 
 }
 
@@ -53,9 +58,10 @@ export interface IModernEventsWebPartProps {
   interactionEventClick: boolean;
   interactionEventDragDrop: boolean;
   supportCustomList: boolean;
-  weekStartsAt:string;
-  listCfg:IDropDownValuesListCfg;
-
+  weekStartsAt: string;
+  listCfg: IDropDownValuesListCfg;
+  overlayListCollection: any[];
+  isListOverviewEnabled: boolean;
 }
 export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEventsWebPartProps> {
   //private _siteOptions: IPropertyPaneDropdownOption[] = [];
@@ -69,12 +75,12 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
         this.properties.custListTitle && this.properties.custListLocation && this.properties.custListCategory && this.properties.custListDescription && this.properties.custListStart && this.properties.custListEnd && this.properties.custListAllDayEvent
       )
     ) {
-      let fieldMap:IFieldMap = (this. properties.supportCustomList)? {"isDefaultSchema":false,"EventDate":this.properties.custListStart,"EndDate":this.properties.custListEnd,"Title":this.properties.custListTitle,"fAllDayEvent":this.properties.custListAllDayEvent,"Description":this.properties.custListDescription,"Location":this.properties.custListLocation,"Category":this.properties.custListCategory}:{"isDefaultSchema":true,"EventDate":"EventDate","EndDate":"EndDate","Title":"Title","fAllDayEvent":"fAllDayEvent","Description":"Description","Location":"Location","Category":"Category"};
+      let fieldMap: IFieldMap = (this.properties.supportCustomList) ? { "isDefaultSchema": false, "EventDate": this.properties.custListStart, "EndDate": this.properties.custListEnd, "Title": this.properties.custListTitle, "fAllDayEvent": this.properties.custListAllDayEvent, "Description": this.properties.custListDescription, "Location": this.properties.custListLocation, "Category": this.properties.custListCategory } : { "isDefaultSchema": true, "EventDate": "EventDate", "EndDate": "EndDate", "Title": "Title", "fAllDayEvent": "fAllDayEvent", "Description": "Description", "Location": "Location", "Category": "Category" };
 
       const app: React.ReactElement<ICalendarAppProps> = React.createElement(
         CalendarApp,
         {
-          fieldMapping:fieldMap,
+          fieldMapping: fieldMap,
           context: this.context,
           remoteSiteUrl: this.properties.site,
           relativeLibOrListUrl: "/lists/" + this.properties.listTitle,
@@ -91,19 +97,21 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
             dateClickNew: !this.properties.interactionEventClick ? this.properties.interactionEventClick : true,
             dragAndDrop: !this.properties.interactionEventDragDrop ? this.properties.interactionEventDragDrop : true
           },
-          displayOptions:{weekStartsAt:this.properties.weekStartsAt}
+          displayOptions: { weekStartsAt: this.properties.weekStartsAt },
+          overlayListCollection:(this.properties.overlayListCollection)?this.properties.overlayListCollection:null,
+          isListOverviewEnabled:(this.properties.isListOverviewEnabled)?this.properties.isListOverviewEnabled:null
         }
       );
       ReactDom.render(app, this.domElement);
     } else {
       const configure: React.ReactElement<IPlaceholderProps> = React.createElement(
         Placeholder, {
-          iconName: strings.LabelConfigIconName,
-          iconText: strings.LabelConfigIconText,
-          description: strings.LabelConfigIconDescription,
-          buttonLabel: strings.LabelConfigBtnLabel,
-          onConfigure: this._onConfigureWebpart.bind(this)
-        }
+        iconName: strings.LabelConfigIconName,
+        iconText: strings.LabelConfigIconText,
+        description: strings.LabelConfigIconDescription,
+        buttonLabel: strings.LabelConfigBtnLabel,
+        onConfigure: this._onConfigureWebpart.bind(this)
+      }
       );
       ReactDom.render(configure, this.domElement);
     }
@@ -211,9 +219,12 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
           });
           this.context.propertyPane.refresh();
           this.render();
-          console.log(columns);
+          //console.log(columns);
         });
       }
+    } else if(propertyPath=="overlayListCollection"){
+      this.context.propertyPane.refresh();
+      this.render();
     }
 
 
@@ -371,6 +382,60 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                   text: strings.LabelViewList,
                   checked: false,
                   disabled: !this.properties.commandbar
+                })
+              ]
+            }
+          ]
+        },
+        {
+          header: {
+            description: strings.PPaneListOverlayPage
+          },
+          groups: [
+            {
+              groupName: strings.SiteGroupListOverlays,
+              groupFields: [
+                PropertyFieldCheckboxWithCallout('isListOverviewEnabled', {
+                  calloutTrigger: CalloutTriggers.Click,
+                  key: 'isListOverviewEnabledId',
+                  calloutContent: React.createElement('p', {}, CalloutTriggers.Click),
+                  calloutWidth: 200,
+                  text: 'Additional Lists',
+                  checked: this.properties.isListOverviewEnabled,
+                }),
+                PropertyFieldCollectionData("overlayListCollection", {
+                  key: "overlayListCollectionId",
+                  label: strings.LabeloverlayListData,
+                  panelHeader: strings.LabeloverlayListDataPanelHeader,
+                  manageBtnLabel: strings.LabeloverlayListDataManageBtn,
+                  value: this.properties.overlayListCollection,
+                  fields: [
+                    {
+                      id: "SiteUrl",
+                      title: "Site Url",
+                      type: CustomCollectionFieldType.string,
+                      required: true
+                    },
+                    {
+                      id: "ListName",
+                      title: "Listname (Alias)",
+                      type: CustomCollectionFieldType.string,
+                      required: true
+                    },
+                    {
+                      id: "BackgroundColor",
+                      title: "Color Code #",
+                      type: CustomCollectionFieldType.string,
+                      required: true
+                    },
+                    {
+                      id: "TextColor",
+                      title: "Color Code #",
+                      type: CustomCollectionFieldType.string,
+                      required: true
+                    }
+                  ],
+                  disabled: ! this.properties.isListOverviewEnabled
                 })
               ]
             }

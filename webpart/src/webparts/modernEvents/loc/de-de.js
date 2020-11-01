@@ -4,6 +4,7 @@ define([], function() {
     //
     "PPaneListPage": "Konfiguration der zu verwendenden Liste. Es können klassische SharePoint Kalender und Custom Listen verwendet werden.",
     "PPaneDisplayOptionsPage": "Einstellungsoption zur Darstellung des Kalenders",
+    "PPaneListOverlayPage":"Mehrere Listen können als Overlay eingeblendet werden",
     //
     "PropertyPaneDescription": "Ein auf der SharePoint ModernUI basierendes Webpart zur Anzeige der klassischen Kalenderlist.",
     "BasicGroupName": "Group Name",
@@ -13,10 +14,14 @@ define([], function() {
     "LabelConfigIconText":"Konfigurieren Sie Ihren Webpart.",
     "LabelConfigIconDescription":"Bitte konfigurieren Sie Ihren Webpart.",
     "LabelConfigBtnLabel":"Konfigurieren",
+    "LabeloverlayListData":"Weitere Listen",
+    "LabeloverlayListDataPanelHeader":"Konfigurieren Sie weitere Listen zur Anzeige",
+    "LabeloverlayListDataManageBtn":"Konfigurieren",
     // SiteGroups
     "SiteGroupName": "Seiteneinstellung",
     "SiteGroupDataBinding": "Datenanbindung",
     "SiteGroupCalDisplayOptions": "Darstellungsoptionen",
+    "SiteGroupListOverlays":"Weitere Listen als Overlay",
     "CommandbarGroupName":"Aktionsleiste",
     "DisplayGroupName":"Darstellungsoptione",
     "InteractionGroupName":"Benutzer Interaktion",
@@ -71,5 +76,7 @@ define([], function() {
       "WeekDay4":"Donnerstag",
       "WeekDay5":"Freitag",
       "WeekDay6":"Samstag",
+    //Callouts
+    "CallOutListOverlayEnable":"Aktivieren Sie diese Option um Daten aus weiteren Listen anzuzeigen"
   }
 });

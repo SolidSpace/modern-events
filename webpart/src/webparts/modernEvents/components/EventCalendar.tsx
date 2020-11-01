@@ -9,6 +9,7 @@ import { ToolbarInput } from '@fullcalendar/core/types/input-types';
 import { DisplayType } from './ENUMDisplayType';
 import interactionPlugin from '@fullcalendar/interaction';
 import {IInteraction,IDisplayOptions} from './CalendarApp';
+import { EventSourceInput } from '@fullcalendar/core/structs/event-source';
 export interface IEventCalendarProps {
   cbSelectEntry: any;
   cbUpdateEvents: any;
@@ -38,7 +39,7 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
       events: this.props.events,
       displayType: displayType,
       currentDate: new Date()
-    };
+    }
   }
 
   public getDisplayDate(): Date {
@@ -184,6 +185,13 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
 
   }
 
+  public addEventSource(sourceInput: EventSourceInput){
+    this.calRef.current.getApi().addEventSource(sourceInput);
+  }
+
+  public removeAllEventSources(){
+    this.calRef.current.getApi().removeAllEventSources();
+  }
 
   private _eventClick(parms: any) {
     let event: IFullCalendarEvent = parms.event;
