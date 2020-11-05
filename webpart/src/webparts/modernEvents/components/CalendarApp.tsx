@@ -76,9 +76,54 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     };
 
   }
-  public test(){
-    this.props.context.propertyPane.open();
+
+  public componentDidMount() {
+    let displayDate: Date;
+    try {
+      displayDate = this.eventCalRef.current.getDisplayDate();
+    } catch (e) {
+    }
+    displayDate = displayDate ? displayDate : new Date();
+
+    if (this.props.remoteSiteUrl && this.props.relativeLibOrListUrl && this.props.listName) {
+      this._queryEvents(this.props.displayType, displayDate).then((calEvents) => {
+
+        this.setState({
+          content: <EventCalendar
+                      displayType={this.state.displayType}
+                      ref={this.eventCalRef}
+                      cbSelectEntry={this._selectedEntry.bind(this)}
+                      cbUpdateEvents={this._queryEvents.bind(this)}
+                      events={calEvents}
+                      timeformat={this.props.timeformat}
+                      cbNewEvent={this._newEntry.bind(this)}
+                      cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                      interactions={this.props.interactions}
+                      displayOptions={this.props.displayOptions}
+                      >
+                      </EventCalendar>
+        });
+      });
+    } else {
+      this.setState({
+        content: <EventCalendar
+                    displayType={this.state.displayType}
+                    ref={this.eventCalRef}
+                    cbSelectEntry={this._selectedEntry.bind(this)}
+                    cbUpdateEvents={this._queryEvents.bind(this)}
+                    events={[]}
+                    timeformat={this.props.timeformat}
+                    cbNewEvent={this._newEntry.bind(this)}
+                    cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
+                    interactions={this.props.interactions}
+                    displayOptions={this.props.displayOptions}
+                    ></EventCalendar>
+      });
+
+    }
+
   }
+
   public componentWillReceiveProps(nextProps: ICalendarAppProps) {
     console.log(nextProps);
     let displayDate: Date = this.eventCalRef.current.getDisplayDate();
@@ -115,54 +160,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     }
   }
 
-  public componentDidMount() {
-    let displayDate: Date;
-    try {
-      displayDate = this.eventCalRef.current.getDisplayDate();
-    } catch (e) {
-    }
-    displayDate = displayDate ? displayDate : new Date();
 
-    if (this.props.remoteSiteUrl && this.props.relativeLibOrListUrl && this.props.listName) {
-      this._queryEvents(this.props.displayType, displayDate).then((calEvents) => {
-
-        this.setState({
-          content: <EventCalendar
-                      displayType={this.state.displayType}
-                      ref={this.eventCalRef}
-                      cbSelectEntry={this._selectedEntry.bind(this)}
-                      cbUpdateEvents={this._queryEvents.bind(this)}
-                      events={calEvents}
-                      timeformat={this.props.timeformat}
-                      cbNewEvent={this._newEntry.bind(this)}
-                      cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
-                      interactions={this.props.interactions}
-                      displayOptions={this.props.displayOptions}
-                      >
-                      </EventCalendar>
-        });
-        this._queryOverlayDataSources(this.state.displayType, displayDate );
-        console.log(calEvents);
-      });
-    } else {
-      this.setState({
-        content: <EventCalendar
-                    displayType={this.state.displayType}
-                    ref={this.eventCalRef}
-                    cbSelectEntry={this._selectedEntry.bind(this)}
-                    cbUpdateEvents={this._queryEvents.bind(this)}
-                    events={[]}
-                    timeformat={this.props.timeformat}
-                    cbNewEvent={this._newEntry.bind(this)}
-                    cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
-                    interactions={this.props.interactions}
-                    displayOptions={this.props.displayOptions}
-                    ></EventCalendar>
-      });
-      this._queryOverlayDataSources(this.state.displayType, displayDate );
-    }
-
-  }
 
   public render(): React.ReactElement<ICalendarAppProps> {
 
@@ -295,8 +293,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
   }
 
   private _updateGrid() {
-  this._queryOverlayDataSources(this.state.displayType, this.eventCalRef.current.getDisplayDate() );
   this._queryEvents(this.state.displayType, this.eventCalRef.current.getDisplayDate()).then((calEvents) => {
+
       this.setState({
         content: <EventCalendar
                     ref={this.eventCalRef}
@@ -310,41 +308,70 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
                     displayOptions={this.props.displayOptions}
                     ></EventCalendar>
       });
+
     }).catch((error) => {
       console.error(error);
     });
   }
 
-  private _queryOverlayDataSources(displayType: DisplayType, currentDisplayDate: Date, nextProps?: ICalendarAppProps){
-    this.eventCalRef.current.removeAllEventSources();
-    this.props.overlayListCollection.forEach((listConfig,index)=>{
-      let con = new PnPListConnector(listConfig.SiteUrl, null, listConfig.ListName);
 
-      this._queryEventList(con,listConfig.ListName,displayType,currentDisplayDate).then((overlayEvents)=>{
-        var eventSource:any = {
-          id:index,
-          events: [
-            {
-              title: 'Event1',
-              start: '2020-11-04'
-            },
-            {
-              title: 'Event2',
-              start: '2020-11-05'
-            }
-          ],
-          color: listConfig.BackgroundColor,   // an option!
-          textColor: listConfig.TextColor // an option!
-        }
-        this.eventCalRef.current.addEventSource(eventSource);
-      }).catch(error=>{
-        console.error("Cannot Query Overlay Events")
+  private _queryEvents(displayType: DisplayType, currentDisplayDate: Date, nextProps?: ICalendarAppProps): Promise<any> {
+    return this._queryMainEventList(displayType,currentDisplayDate,nextProps).then((calEvents)=>{
+      this._queryOverlayDataSources(displayType,currentDisplayDate,nextProps);
+      return Promise.resolve(calEvents);
+    }).catch(error=>{
+      return Promise.reject(error);
+    })
+  }
+
+  private _queryOverlayDataSources(displayType: DisplayType, currentDisplayDate: Date, nextProps?: ICalendarAppProps){
+    if(this.props.overlayListCollection ==null ){
+      return;
+    }
+
+    setTimeout(()=>{
+      this.props.overlayListCollection.forEach((listConfig,index)=>{
+        let con = new PnPListConnector(listConfig.SiteUrl, null, listConfig.ListName);
+
+        this._queryEventList(con,listConfig.ListName,displayType,currentDisplayDate,false).then((overlayEvents)=>{
+          var eventSource:any = {
+            id:"0XDATAX00",
+            events: [
+              {
+                title: 'Event1',
+                start: '2020-11-04',
+                extendedProps: {
+                  location: "loc1",
+                  description: "desc1",
+                  category: "desc1",
+                  isEditable:false
+                }
+              },
+              {
+                title: 'Event2',
+                start: '2020-11-05',
+                extendedProps: {
+                  location: "loc2",
+                  description: "desc2",
+                  category: "desc2",
+                  isEditable:false
+                }
+              }
+            ],
+            color: listConfig.BackgroundColor,   // an option!
+            textColor: listConfig.TextColor // an option!
+          }
+          this.eventCalRef.current.removeEventSourceById("0XDATAX00");
+          this.eventCalRef.current.addEventSource(eventSource);
+        }).catch(error=>{
+          console.error("Cannot Query Overlay Events");
+        });
       });
-    });
+    },2000);
   }
 
 
-  private _queryEvents(displayType: DisplayType, currentDisplayDate: Date, nextProps?: ICalendarAppProps,skipColumnOptions?:boolean): Promise<any> {
+  private _queryMainEventList(displayType: DisplayType, currentDisplayDate: Date, nextProps?: ICalendarAppProps): Promise<any> {
     let listName = nextProps ? nextProps.listName : this.props.listName;
     let relativeLibOrListUrl = nextProps ? nextProps.relativeLibOrListUrl : this.props.relativeLibOrListUrl;
     let remoteSiteUrl = nextProps ? nextProps.remoteSiteUrl : this.props.remoteSiteUrl;
@@ -389,10 +416,10 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
       Promise.reject(error);
     });
     */
-   return this._queryEventList(con,listName,displayType,currentDisplayDate);
+   return this._queryEventList(con,listName,displayType,currentDisplayDate,true);
   }
 
-  private _queryEventList(con:PnPListConnector,listName:string,displayType: DisplayType, currentDisplayDate: Date): Promise<any>{
+  private _queryEventList(con:PnPListConnector,listName:string,displayType: DisplayType, currentDisplayDate: Date,eventsEditable:boolean): Promise<any>{
     let startDate;
     let endDate;
     switch (+displayType) {
@@ -413,7 +440,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     caml = `<View>${caml}</View>`;
     return con.getItemByCAML(listName, { ViewXml: caml }).then((result) => {
       let calEvents = result.map((event) => {
-        return EventConverter.getFCEvent(event,this.props.fieldMapping);
+        return EventConverter.getFCEvent(event,this.props.fieldMapping,eventsEditable);
       });
       return Promise.resolve(calEvents);
     }).catch((error) => {

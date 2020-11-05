@@ -39,6 +39,7 @@ export interface IEventPanelState {
   isSaveInProgress:boolean;
   event: ISPEvent;
   inputValidation: boolean;
+  isEditable:boolean;
 }
 
 export class EventPanel extends React.Component<IEventPanelProps, IEventPanelState> {
@@ -52,7 +53,8 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
         isDialogOpen: false,
         event: EventConverter.getSPEvent(props.event),
         inputValidation: false,
-        isSaveInProgress:false
+        isSaveInProgress:false,
+        isEditable:props.event.extendedProps.isEditable
       };
     } else {
       let eventDate = this.props.newDateStr?moment(this.props.newDateStr+"00:00:00","YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DDTHH:mm:ss"): moment().format("YYYY-MM-DDTHH:mm:ss");
@@ -71,7 +73,8 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
           Description: ""
         },
         inputValidation: false,
-        isSaveInProgress:false
+        isSaveInProgress:false,
+        isEditable:props.event.extendedProps.isEditable
       };
     }
   }
@@ -106,7 +109,8 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
         ...this.state,
         event: newEvent,
         isOpen: true,
-        inputValidation: false
+        inputValidation: false,
+        isEditable:nextProps.event.extendedProps.isEditable
       });
     }
 
@@ -261,6 +265,7 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
     }
     let relativeSiteUrl = this.props.remoteSiteUrl ? this.props.remoteSiteUrl.replace(/https:\/\/.+.sharepoint.com/g, "") + this.props.relativeLibOrListUrl : "";
     relativeSiteUrl = !relativeSiteUrl.substr(1, 1).match("/") ? relativeSiteUrl : "/" + relativeSiteUrl;
+    console.log(this.state.isEditMode);
     if (this.state.isEditMode) {
       return (
         <div className="se-PanelActions">
@@ -279,8 +284,10 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
         </div>
       );
     } else {
+
+      let editControlsClass = (this.state.isEditable)?"se-PanelAction":"se-hide";
       return (
-        <div className="se-PanelActions">
+        <div className={editControlsClass}>
           <div className="se-PanelAction ">
             <SecurityTrimmedControl context={this.props.context}
               level={PermissionLevel.remoteListOrLib}
@@ -293,7 +300,7 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
               </div>
             </SecurityTrimmedControl>
           </div>
-          <div className="se-PanelAction ">
+          <div className={editControlsClass}>
             <SecurityTrimmedControl context={this.props.context}
               level={PermissionLevel.remoteListOrLib}
               remoteSiteUrl={this.props.remoteSiteUrl}
@@ -312,8 +319,6 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
             </div>
           </div>
         </div>
-
-
       );
     }
   }

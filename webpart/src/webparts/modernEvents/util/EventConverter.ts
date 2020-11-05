@@ -51,7 +51,7 @@ export class EventConverter {
 
   }
 
-  public static getFCEvent(event: ISPEvent, fieldMap: IFieldMap): IFullCalendarEvent {
+  public static getFCEvent(event: ISPEvent, fieldMap: IFieldMap,isEditable:boolean): IFullCalendarEvent {
     let fcEvent: IFullCalendarEvent;
     if (fieldMap.isDefaultSchema) {
       fcEvent = {
@@ -63,7 +63,8 @@ export class EventConverter {
         extendedProps: {
           location: event.Location,
           description: event.Description,
-          category: event.Category
+          category: event.Category,
+          isEditable:isEditable
         }
       };
     } else {
@@ -76,7 +77,8 @@ export class EventConverter {
         extendedProps: {
           location: event[fieldMap.Location],
           description: event[fieldMap.Description],
-          category: event[fieldMap.Category]
+          category: event[fieldMap.Category],
+          isEditable:isEditable
         }
       };
 

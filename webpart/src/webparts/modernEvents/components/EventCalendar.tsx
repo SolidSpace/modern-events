@@ -29,12 +29,13 @@ export interface IEventCalendarState {
 }
 
 export class EventCalendar extends React.Component<IEventCalendarProps, IEventCalendarState> {
-  private calRef: React.RefObject<FullCalendar>;
+  private _calRef: React.RefObject<FullCalendar>;
+  private _eventSources:any[] = [];
 
   constructor(props: IEventCalendarProps) {
     super(props);
     let displayType: DisplayType = (this.props.displayType) ? this.props.displayType : DisplayType.DayGrid;
-    this.calRef = React.createRef();
+    this._calRef = React.createRef();
     this.state = {
       events: this.props.events,
       displayType: displayType,
@@ -104,11 +105,12 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
     return (
       <FullCalendar
         allDayText={strings.LabelAllDay}
-        ref={this.calRef}
+        ref={this._calRef}
         defaultView={defaultView}
         plugins={plugins}
         themeSystem="standard"
         events={this.state.events}
+        //eventSources={this.state.events}
         defaultDate={this.state.currentDate ? this.state.currentDate : new Date()}
         eventClick={this._eventClick.bind(this)}
         eventMouseEnter={this._eventMouseEnter.bind(this)}
@@ -149,7 +151,7 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
     this.props.cbDragDropEvent(eventData.event);
   }
   private _navigateToday() {
-    let calendarApi = this.calRef.current.getApi();
+    let calendarApi = this._calRef.current.getApi();
     calendarApi.today();
     this.props.cbUpdateEvents(this.state.displayType, calendarApi.getDate()).then((events) => {
       this.setState({
@@ -163,7 +165,7 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
   }
 
   private _navigateNext(parms: any): void {
-    let calendarApi = this.calRef.current.getApi();
+    let calendarApi = this._calRef.current.getApi();
     calendarApi.next();
 
     this.props.cbUpdateEvents(this.state.displayType, calendarApi.getDate()).then((events) => {
@@ -175,7 +177,7 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
   }
 
   private _navigatePrev(parms: any): void {
-    let calendarApi = this.calRef.current.getApi();
+    let calendarApi = this._calRef.current.getApi();
     calendarApi.prev();
     this.props.cbUpdateEvents(this.state.displayType, calendarApi.getDate()).then((events) => {
       this.setState({
@@ -186,11 +188,20 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
   }
 
   public addEventSource(sourceInput: EventSourceInput){
-    this.calRef.current.getApi().addEventSource(sourceInput);
+    this._calRef.current.getApi().addEventSource(sourceInput);
+  }
+
+  public removeEventSourceById(id: string | number){
+    let test = this._calRef.current.getApi().getEventSourceById(id);
+    if(this._calRef.current.getApi().getEventSourceById(id)){
+      this._calRef.current.getApi().getEventSourceById(id).remove();
+    }
+
   }
 
   public removeAllEventSources(){
-    this.calRef.current.getApi().removeAllEventSources();
+      this._eventSources=[];
+      this._calRef.current.getApi().removeAllEventSources();
   }
 
   private _eventClick(parms: any) {
