@@ -261,6 +261,10 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
     }
     let relativeSiteUrl = this.props.remoteSiteUrl ? this.props.remoteSiteUrl.replace(/https:\/\/.+.sharepoint.com/g, "") + this.props.relativeLibOrListUrl : "";
     relativeSiteUrl = !relativeSiteUrl.substr(1, 1).match("/") ? relativeSiteUrl : "/" + relativeSiteUrl;
+    console.warn("******SECURITY URLS ********")
+    console.warn("relativeSiteUrl:" +relativeSiteUrl);
+    console.warn("RemoteSiteUrl:" +this.props.remoteSiteUrl);
+    console.warn("******SECURITY URLS END ********")
     if (this.state.isEditMode) {
       return (
         <div className="se-PanelActions">
@@ -281,7 +285,7 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
     } else {
       return (
         <div className="se-PanelActions">
-          <div className="se-PanelAction ">
+         <div className="se-PanelAction ">
             <SecurityTrimmedControl context={this.props.context}
               level={PermissionLevel.remoteListOrLib}
               remoteSiteUrl={this.props.remoteSiteUrl}
@@ -317,8 +321,32 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
       );
     }
   }
-
-
+/*
+          <div className="se-PanelAction ">
+            <SecurityTrimmedControl context={this.props.context}
+              level={PermissionLevel.remoteListOrLib}
+              remoteSiteUrl={this.props.remoteSiteUrl}
+              relativeLibOrListUrl={relativeSiteUrl}
+              permissions={[SPPermission.addListItems]}>
+              <div className="tooltip">
+                <Icon iconName="WindowEdit" className="se-PanelAction-Primary ms-font-xxl" onClick={this._toggleEdit.bind(this)} />
+                <span className="tooltiptext">{strings.TooltipEdit}</span>
+              </div>
+            </SecurityTrimmedControl>
+          </div>
+          <div className="se-PanelAction ">
+            <SecurityTrimmedControl context={this.props.context}
+              level={PermissionLevel.remoteListOrLib}
+              remoteSiteUrl={this.props.remoteSiteUrl}
+              relativeLibOrListUrl={relativeSiteUrl}
+              permissions={[SPPermission.addListItems]}>
+              <div className="tooltip">
+                <Icon iconName="Delete" className="se-PanelAction-Primary ms-font-xxl" onClick={this._deleteEvent.bind(this)} />
+                <span className="tooltiptext">{strings.TooltipDelete}</span>
+              </div>
+            </SecurityTrimmedControl>
+          </div>
+*/
 
 
   /**

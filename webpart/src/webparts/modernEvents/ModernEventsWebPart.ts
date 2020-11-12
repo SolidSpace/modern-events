@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Version } from '@microsoft/sp-core-library';
-import { BaseClientSideWebPart, IPropertyPaneDropdownOption, PropertyPaneDropdown, PropertyPaneCheckbox, PropertyPaneLabel, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-webpart-base';
+import { BaseClientSideWebPart} from '@microsoft/sp-webpart-base';
+import { IPropertyPaneDropdownOption, PropertyPaneDropdown, PropertyPaneCheckbox, PropertyPaneLabel, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane'
 import {
   IPropertyPaneConfiguration,
   PropertyPaneTextField
@@ -37,6 +38,7 @@ export interface IModernEventsWebPartProps {
   site: string;
   siteOther: string;
   listTitle: string;
+  listRelativeUrl:string; // /sites/<siteName>/<list-or-library-URL>
   description: string;
   commandbar: boolean;
   viewMonth: boolean;
@@ -77,7 +79,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
           fieldMapping:fieldMap,
           context: this.context,
           remoteSiteUrl: this.properties.site,
-          relativeLibOrListUrl: "/lists/" + this.properties.listTitle,
+          relativeLibOrListUrl: this.properties.listRelativeUrl, //"/lists/" + this.properties.listTitle,
           displayType: DisplayType.WeekGrid,
           listName: this.properties.listTitle,
           timeformat: this.properties.timeformat,
@@ -136,11 +138,13 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
         if (this.properties.site) {
           con.getListTitlesByTemplate(this.properties.site, "100").then((listTitleResult) => {
             this.properties.listCfg.listOptions = listTitleResult.value.map((list: ISPList) => {
+              //EntityTypeName:'CantinaMealsList'
               return {
                 key: list.Title,
                 text: list.Title
               };
             });
+
             this.context.propertyPane.refresh();
             this.render();
           });
@@ -208,6 +212,12 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                 this.properties.listCfg.yesnoColumnOptions.push({ key: element.EntityPropertyName, text: element.EntityPropertyName });
                 break;
             }
+          });
+          con.getListFormProperties(this.properties.site,this.properties.listTitle).then((formProps:any)=>{
+            if(formProps && formProps.value.length>0){
+              this.properties.listRelativeUrl = formProps.value[0].ServerRelativeUrl.replace("/DispForm.aspx","");
+            }
+                       console.log(formProps);
           });
           this.context.propertyPane.refresh();
           this.render();

@@ -49,10 +49,18 @@ export class SiteConnector{
   }
 
   public getListTitlesByTemplate(site: string,templateId:string): Promise<ISPLists> {
-    return this.context.spHttpClient.get(site + `/_api/web/lists?$filter=Hidden eq false and BaseTemplate eq `+templateId, SPHttpClient.configurations.v1)
+    return this.context.spHttpClient.get(site + `/_api/web/lists?select=Title,ServerRelativeUrl&$filter=Hidden eq false and BaseTemplate eq `+templateId, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });
+  }
+
+  public getListFormProperties(site: string,listName:string): Promise<string>{
+    return this.context.spHttpClient.get(site+"/_api/web/lists/GetByTitle('" + listName + "')/Forms?$select=ServerRelativeUrl", SPHttpClient.configurations.v1)
+    .then((response:SPHttpClientResponse)=>{
+      return response.json();
+    });
+    //"/_api/web/lists/GetByTitle('" + listName + "')/Forms?$select=ServerRelativeUrl"
   }
 
 //"BaseTemplate": 106 = Calendar List
