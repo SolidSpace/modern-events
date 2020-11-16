@@ -20,6 +20,16 @@ import { string } from 'prop-types';
 import { IFieldMap } from   './components/IFieldMap';
 import { Feature } from '@pnp/sp/src/features';
 //import { RectangleEdge } from 'office-ui-fabric-react/lib/utilities/positioning';
+import {
+  MessageBarButton,
+  Link,
+  Stack,
+  StackItem,
+  MessageBar,
+  MessageBarType,
+  ChoiceGroup,
+  IStackProps,
+} from 'office-ui-fabric-react';
 
 interface IDropDownValuesListCfg{
    siteOptions: IPropertyPaneDropdownOption [];
@@ -57,13 +67,15 @@ export interface IModernEventsWebPartProps {
   supportCustomList: boolean;
   weekStartsAt:string;
   listCfg:IDropDownValuesListCfg;
-
+  isIE:boolean;
 }
 export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEventsWebPartProps> {
   //private _siteOptions: IPropertyPaneDropdownOption[] = [];
   //private _listOptions: IPropertyPaneDropdownOption[] = [];
 
   public render(): void {
+    let ua = navigator.userAgent;
+    var isIE = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
     if (
       (!this.properties.supportCustomList && this.properties.site && this.properties.listTitle)
       ||
@@ -73,30 +85,31 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
     ) {
       let fieldMap:IFieldMap = (this. properties.supportCustomList)? {"isDefaultSchema":false,"EventDate":this.properties.custListStart,"EndDate":this.properties.custListEnd,"Title":this.properties.custListTitle,"fAllDayEvent":this.properties.custListAllDayEvent,"Description":this.properties.custListDescription,"Location":this.properties.custListLocation,"Category":this.properties.custListCategory}:{"isDefaultSchema":true,"EventDate":"EventDate","EndDate":"EndDate","Title":"Title","fAllDayEvent":"fAllDayEvent","Description":"Description","Location":"Location","Category":"Category"};
 
-      const app: React.ReactElement<ICalendarAppProps> = React.createElement(
-        CalendarApp,
-        {
-          fieldMapping:fieldMap,
-          context: this.context,
-          remoteSiteUrl: this.properties.site,
-          relativeLibOrListUrl: this.properties.listRelativeUrl, //"/lists/" + this.properties.listTitle,
-          displayType: DisplayType.WeekGrid,
-          listName: this.properties.listTitle,
-          timeformat: this.properties.timeformat,
-          commandBarVisible: this.properties.commandbar,
-          commandBarButtonVisibility: {
-            month: this.properties.viewMonth,
-            time: this.properties.viewWeek,
-            list: this.properties.viewList
-          },
-          interactions: {
-            dateClickNew: !this.properties.interactionEventClick ? this.properties.interactionEventClick : true,
-            dragAndDrop: !this.properties.interactionEventDragDrop ? this.properties.interactionEventDragDrop : true
-          },
-          displayOptions:{weekStartsAt:this.properties.weekStartsAt}
-        }
-      );
-      ReactDom.render(app, this.domElement);
+
+        const app: React.ReactElement<ICalendarAppProps> = React.createElement(
+          CalendarApp,
+          {
+            fieldMapping:fieldMap,
+            context: this.context,
+            remoteSiteUrl: this.properties.site,
+            relativeLibOrListUrl: this.properties.listRelativeUrl, //"/lists/" + this.properties.listTitle,
+            displayType: DisplayType.WeekGrid,
+            listName: this.properties.listTitle,
+            timeformat: this.properties.timeformat,
+            commandBarVisible: this.properties.commandbar,
+            commandBarButtonVisibility: {
+              month: this.properties.viewMonth,
+              time: this.properties.viewWeek,
+              list: this.properties.viewList
+            },
+            interactions: {
+              dateClickNew: !this.properties.interactionEventClick ? this.properties.interactionEventClick : true,
+              dragAndDrop: !this.properties.interactionEventDragDrop ? this.properties.interactionEventDragDrop : true
+            },
+            displayOptions:{weekStartsAt:this.properties.weekStartsAt}
+          }
+        );
+        ReactDom.render(app, this.domElement);
     } else {
       const configure: React.ReactElement<IPlaceholderProps> = React.createElement(
         Placeholder, {
@@ -233,9 +246,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
     return Version.parse('1.0');
   }
 
-  private _checkCustomList() {
-    console.log('click');
-  }
+
   //PPaneDisplayOptionsPage
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {

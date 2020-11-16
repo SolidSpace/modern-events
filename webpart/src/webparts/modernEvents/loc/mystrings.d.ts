@@ -70,6 +70,8 @@ declare interface IModernEventsWebPartStrings {
   TooltipDelete: string;
   //Fullcalendar
   LabelAllDay: string;
+  //Errors
+  ErrIENotCompatible:string;
 }
 
 declare module 'ModernEventsWebPartStrings' {

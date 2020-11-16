@@ -71,5 +71,7 @@ define([], function() {
       "WeekDay4":"Donnerstag",
       "WeekDay5":"Freitag",
       "WeekDay6":"Samstag",
+    //Errors
+    "ErrIENotCompatible":"Der Internet Explorer ist nicht kompatibel zu diesem Kalender Element. Bitte verwenden Sie Chrome,Firefox oder Edge als Browser."
   }
 });

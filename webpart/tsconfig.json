@@ -29,7 +29,7 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts", "src/webparts/modernEvents/components/MessagePlaceholder.tsx"
   ],
   "exclude": [
     "node_modules",
