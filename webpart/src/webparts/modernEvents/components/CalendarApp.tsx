@@ -61,7 +61,6 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     super(props);
     this.eventCalRef = React.createRef();
     let ua = navigator.userAgent;
-    var isIE = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
     this.state = {
       commandbar: <CalendarCommandbar
         cbListGrid={this._changeDisplayType.bind(this)}

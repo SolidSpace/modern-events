@@ -3,11 +3,8 @@ import * as ReactDom from 'react-dom';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { Version } from '@microsoft/sp-core-library';
 import { BaseClientSideWebPart} from '@microsoft/sp-webpart-base';
-import { IPropertyPaneDropdownOption, PropertyPaneDropdown, PropertyPaneCheckbox, PropertyPaneLabel, PropertyPaneButton, PropertyPaneButtonType } from '@microsoft/sp-property-pane'
-import {
-  IPropertyPaneConfiguration,
-  PropertyPaneTextField
-} from '@microsoft/sp-property-pane';
+import { IPropertyPaneDropdownOption,IPropertyPaneConfiguration, PropertyPaneDropdown, PropertyPaneCheckbox, PropertyPaneLabel} from '@microsoft/sp-property-pane';
+import { MessageBarButton,Link,Stack,StackItem, MessageBar, MessageBarType, ChoiceGroup, IStackProps, IMessageBarProps} from 'office-ui-fabric-react';
 import { Placeholder, IPlaceholderProps } from "@pnp/spfx-controls-react/lib/Placeholder";
 import * as strings from 'ModernEventsWebPartStrings';
 //import { element } from 'prop-types';
@@ -20,16 +17,7 @@ import { string } from 'prop-types';
 import { IFieldMap } from   './components/IFieldMap';
 import { Feature } from '@pnp/sp/src/features';
 //import { RectangleEdge } from 'office-ui-fabric-react/lib/utilities/positioning';
-import {
-  MessageBarButton,
-  Link,
-  Stack,
-  StackItem,
-  MessageBar,
-  MessageBarType,
-  ChoiceGroup,
-  IStackProps,
-} from 'office-ui-fabric-react';
+
 
 interface IDropDownValuesListCfg{
    siteOptions: IPropertyPaneDropdownOption [];
@@ -76,6 +64,16 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
   public render(): void {
     let ua = navigator.userAgent;
     var isIE = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
+    const ieWarning:React.ReactElement<IMessageBarProps>=React.createElement(
+      MessageBar,{
+        messageBarType:MessageBarType.blocked,
+        isMultiline:false,
+        dismissButtonAriaLabel:"close",
+        onDismiss:null,
+        children:React.createElement('div',null,strings.ErrIENotCompatible)
+      }
+    );
+
     if (
       (!this.properties.supportCustomList && this.properties.site && this.properties.listTitle)
       ||
@@ -83,9 +81,9 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
         this.properties.custListTitle && this.properties.custListLocation && this.properties.custListCategory && this.properties.custListDescription && this.properties.custListStart && this.properties.custListEnd && this.properties.custListAllDayEvent
       )
     ) {
+      ReactDom.render(ieWarning, this.domElement);
+
       let fieldMap:IFieldMap = (this. properties.supportCustomList)? {"isDefaultSchema":false,"EventDate":this.properties.custListStart,"EndDate":this.properties.custListEnd,"Title":this.properties.custListTitle,"fAllDayEvent":this.properties.custListAllDayEvent,"Description":this.properties.custListDescription,"Location":this.properties.custListLocation,"Category":this.properties.custListCategory}:{"isDefaultSchema":true,"EventDate":"EventDate","EndDate":"EndDate","Title":"Title","fAllDayEvent":"fAllDayEvent","Description":"Description","Location":"Location","Category":"Category"};
-
-
         const app: React.ReactElement<ICalendarAppProps> = React.createElement(
           CalendarApp,
           {
@@ -109,7 +107,10 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
             displayOptions:{weekStartsAt:this.properties.weekStartsAt}
           }
         );
-        ReactDom.render(app, this.domElement);
+        (isIE)?ReactDom.render(ieWarning, this.domElement):ReactDom.render(app, this.domElement);
+
+
+
     } else {
       const configure: React.ReactElement<IPlaceholderProps> = React.createElement(
         Placeholder, {
