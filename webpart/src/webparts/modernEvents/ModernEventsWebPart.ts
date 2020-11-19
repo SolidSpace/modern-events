@@ -50,6 +50,8 @@ export interface IModernEventsWebPartProps {
   custListEnd: string;
   custListDescription: string;
   custListAllDayEvent: string;
+  listIds:Array<string>;
+  listId:string;
   interactionEventClick: boolean;
   interactionEventDragDrop: boolean;
   supportCustomList: boolean;
@@ -93,6 +95,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
             relativeLibOrListUrl: this.properties.listRelativeUrl, //"/lists/" + this.properties.listTitle,
             displayType: DisplayType.WeekGrid,
             listName: this.properties.listTitle,
+            listId:this.properties.listId,
             timeformat: this.properties.timeformat,
             commandBarVisible: this.properties.commandbar,
             commandBarButtonVisibility: {
@@ -188,12 +191,19 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
       this.properties.listCfg.listDisabled = true;
       let listType: string = this.properties.supportCustomList ? "100" : "106";
       con.getListTitlesByTemplate(this.properties.site, listType).then((listTitleResult) => {
+
         this.properties.listCfg.listOptions = listTitleResult.value.map((list: ISPList) => {
           return {
             key: list.Title,
             text: list.Title
           };
         });
+        let listIds:Array<string>=new Array();
+        listTitleResult.value.forEach((item)=>{
+          listIds[item.Title]=item.Id;
+        });
+        console.log(listIds);
+        this.properties.listIds = listIds;
         this.properties.listCfg.listDisabled = false;
         this.context.propertyPane.refresh();
         this.render();
@@ -202,7 +212,11 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
       const isCustomList = !this.properties.supportCustomList ? false : this.properties.supportCustomList;
       if (isCustomList) {
         const _that = this;
-        con.getEventListColumns(this.properties.listTitle, this.properties.site).then((columns) => {
+        this.properties.listId =  this.properties.listIds[this.properties.listTitle];
+        con.getEventListColumns(this.properties.listTitle,
+                                this.properties.site,
+                                this.properties.listId,
+                                ).then((columns) => {
           this.properties.listCfg.dateColumnOptions = [];
           this.properties.listCfg.textColumnOptions = [];
           this.properties.listCfg.categoryColumnOptions = [];
@@ -227,11 +241,10 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                 break;
             }
           });
-          con.getListFormProperties(this.properties.site,this.properties.listTitle).then((formProps:any)=>{
+          con.getListFormProperties(this.properties.site,this.properties.listTitle, this.properties.listId).then((formProps:any)=>{
             if(formProps && formProps.value.length>0){
               this.properties.listRelativeUrl = formProps.value[0].ServerRelativeUrl.replace("/DispForm.aspx","");
             }
-                       console.log(formProps);
           });
           this.context.propertyPane.refresh();
           this.render();
@@ -313,13 +326,6 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
                   options: this.properties.listCfg.yesnoColumnOptions,
                   disabled: (this.properties.supportCustomList && this.properties.listTitle != "") ? false : true
                 }),
-                /*
-                PropertyPaneTextField('siteOther', {
-                  label: strings.LabelSiteOther,
-                  ariaLabel: "otherSiteAria",
-                  disabled: this._otherDisabled
-
-                }),*/
               ]
             }
           ]

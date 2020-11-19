@@ -38,6 +38,24 @@
         "--remote-debugging-port=9222",
         "-incognito"
       ]
+    },
+    {
+      "name": "Sandbox1 workbench",
+      "type": "chrome",
+      "request": "launch",
+      "url": "https://sedev101.sharepoint.com/sites/Sandbox1/_layouts/workbench.aspx",
+      "webRoot": "${workspaceRoot}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///.././src/*": "${webRoot}/src/*",
+        "webpack:///../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../src/*": "${webRoot}/src/*",
+        "webpack:///../../../../../src/*": "${webRoot}/src/*"
+      },
+      "runtimeArgs": [
+        "--remote-debugging-port=9222",
+        "-incognito"
+      ]
     }
   ]
 }

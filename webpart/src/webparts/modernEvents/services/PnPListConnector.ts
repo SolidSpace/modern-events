@@ -29,6 +29,7 @@ const LIST_EXISTS: string = 'List exists';
 export interface IListCfg {
   fields: IListFieldCfg[];
   listName: string;
+  listId?: string;
 }
 
 /**
@@ -74,16 +75,17 @@ export class PnPListConnector {
   private createOnFail: boolean;
   private web: Web = sp.web;
 
+
   /**
    * Supply either a Webpart Context to use PNPListConnector with your current
    * Site Collection or a path to the remote site url.
    * @param context
    * @param siteUrl
    */
-  constructor(listName: string, context?: WebPartContext, siteUrl?: string) {
+  constructor(listName: string, context?: WebPartContext, siteUrl?: string, listId?: string) {
     this.properties = new BaseListConfig();
     this.properties.listName = listName;
-
+    this.properties.listId = listId;
     if (context == undefined && siteUrl == undefined) {
       throw new Error("You must either supply a context or siteurl to use the PNPList Connector");
     }
@@ -136,15 +138,8 @@ export class PnPListConnector {
    * @param newItem
    */
   public addIem(newItem: any): Promise<ItemAddResult> {
-    if (this.createOnFail) {
-      return this.ensureList().then((list: List): Promise<ItemAddResult> => {
-        return list.items.add(newItem);
-      });
-    } else {
-      //this.web.lists.ensure(this.properties.listName).then();
-      let list = this.web.lists.getByTitle(this.properties.listName);
-      return list.items.add(newItem);
-    }
+    let list: any = (this.properties.listId) ? this.web.lists.getById(this.properties.listId) : this.web.lists.getByTitle(this.properties.listName);
+    return list.items.add(newItem);
   }
 
   /**
@@ -154,7 +149,7 @@ export class PnPListConnector {
    */
 
   public updateItem(id: number, item): Promise<ItemUpdateResult> {
-    let list = this.web.lists.getByTitle(this.properties.listName);
+    let list: any = (this.properties.listId) ? this.web.lists.getById(this.properties.listId) : this.web.lists.getByTitle(this.properties.listName);
     return list.items.getById(id).update(item);
   }
 
@@ -164,19 +159,14 @@ export class PnPListConnector {
    * @param query
    */
 
-  public getItemByCAML(listTitle: string, query: CamlQuery): Promise<any> {
-    if (this.createOnFail) {
-      return this.ensureList().then((list: List): Promise<any> => {
-        return list.getItemsByCAMLQuery(query);
-      });
-    } else {
-      return this.web.lists.getByTitle(listTitle).getItemsByCAMLQuery(query).then((result: any[]) => {
-        return result;
-      }).catch((error: any) => {
-        console.error(error);
-        return error;
-      });
-    }
+  public getItemByCAML(listTitle: string, query: CamlQuery, listId?: string): Promise<any> {
+    let list = (listId) ? this.web.lists.getById(listId) : this.web.lists.getByTitle(listTitle);
+    return list.getItemsByCAMLQuery(query).then((result: any[]) => {
+      return result;
+    }).catch((error: any) => {
+      console.error(error);
+      return error;
+    });
   }
 
   /**
@@ -184,16 +174,11 @@ export class PnPListConnector {
    * @param listTitle
    * @param selects
    */
-  private getItems(listTitle: string, ...selects: string[]): Promise<any[]> {
-    if (this.createOnFail) {
-      return this.ensureList().then((list: List): Promise<any[]> => {
-        return list.items.select(...selects).get();
-      });
-    } else {
-      return this.web.lists.getByTitle(listTitle).select(...selects).items.get().then((items: any) => {
+  private getItems(listTitle: string,listId?:string, ...selects: string[]): Promise<any[]> {
+    let list = (listId) ? this.web.lists.getById(listTitle) : this.web.lists.getByTitle(listTitle);
+      return list.select(...selects).items.get().then((items: any) => {
         return items;
       });
-    }
   }
 
   /**
@@ -201,26 +186,14 @@ export class PnPListConnector {
    * @param data
    */
   public deleteItem(data): Promise<any> {
-    if (this.createOnFail) {
-      return this.ensureList().then((list: List): Promise<any> => {
-        return list.items.getById(data.Id).delete().then((result) => {
-          return Promise.resolve(true);
-        }).catch((error) => {
-          return Promise.reject(false);
-        });
-      }).catch((reject) => {
-        console.error(reject);
-        Promise.reject("Item cannot be deleted.");
-      });
-    }else{
-      return this.web.lists.getByTitle(this.properties.listName).items.getById(data.Id).delete().then((result) => {
-        console.log(result);
-        return Promise.resolve(result);
-      }).catch((error) => {
-        console.error(error);
-        return Promise.reject(error);
-      });
-    }
+    let list: any = (this.properties.listId) ? this.web.lists.getById(this.properties.listId) : this.web.lists.getByTitle(this.properties.listName);
+    return list.items.getById(data.Id).delete().then((result) => {
+      return Promise.resolve(result);
+    }).catch((error) => {
+      console.error(error);
+      return Promise.reject(error);
+    });
+
   }
 
   public addView(list: List, configuration: IViewConfig): Promise<any> {

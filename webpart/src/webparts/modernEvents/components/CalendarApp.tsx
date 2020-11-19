@@ -33,6 +33,7 @@ export interface ICalendarAppProps {
   fieldMapping: IFieldMap;
   context: any;
   listName: string;
+  listId: string;
   remoteSiteUrl: string;
   relativeLibOrListUrl: string;
   displayType: DisplayType;
@@ -79,7 +80,6 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     this.props.context.propertyPane.open();
   }
   public componentWillReceiveProps(nextProps: ICalendarAppProps) {
-    console.log(nextProps);
     let displayDate: Date = this.eventCalRef.current.getDisplayDate();
     displayDate = displayDate ? displayDate : new Date();
 
@@ -110,6 +110,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
           >
           </EventCalendar>
         });
+
       });
     }
   }
@@ -140,7 +141,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
           >
           </EventCalendar>
         });
-        console.log(calEvents);
+
       });
     } else {
       this.setState({
@@ -257,7 +258,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
    * @param event
    */
   private _deleteEvent(event: ISPEvent): Promise<boolean> {
-    let con = new PnPListConnector(this.props.listName, this.props.context, this.props.remoteSiteUrl);
+    let con = new PnPListConnector(this.props.listName, this.props.context, this.props.remoteSiteUrl,this.props.listId);
     return con.deleteItem(event).then((result) => {
       return Promise.resolve(true);
     }).catch((error) => {
@@ -282,7 +283,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
    * @param event
    */
   private _saveChanges(event: ISPEvent): Promise<ItemUpdateResult | ItemAddResult> {
-    let con = new PnPListConnector(this.props.listName, this.props.context, this.props.remoteSiteUrl);
+    let con = new PnPListConnector(this.props.listName, this.props.context, this.props.remoteSiteUrl,this.props.listId);
     let spEvent = EventConverter.getCustomEvent(event, this.props.fieldMapping);
     if (!spEvent.Id) {
       return con.addIem(spEvent).then((result) => {
@@ -332,7 +333,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
     let con = new PnPListConnector(this.props.listName, this.props.context, this.props.remoteSiteUrl);
     let siteCon: SiteConnector = new SiteConnector(this.props.context);
 
-    siteCon.getColumnOptions(this.props.fieldMapping.Category, listName, remoteSiteUrl).then((categories) => {
+    siteCon.getColumnOptions(this.props.fieldMapping.Category, listName, remoteSiteUrl,this.props.listId).then((categories) => {
       let categoryValues = categories.value[0].Choices.map((item) => {
         return {
           key: item,
@@ -340,6 +341,8 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
         };
       });
       this.setState({ categories: categoryValues });
+    }).catch(error=>{
+      console.log(error);
     });
     switch (+displayType) {
       case DisplayType.WeekGrid:
@@ -358,7 +361,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
       .And()
       .DateField(this.props.fieldMapping["EndDate"]).LessThanOrEqualTo(moment(endDate).toDate()).ToString();
     caml = `<View>${caml}</View>`;
-    return con.getItemByCAML(listName, { ViewXml: caml }).then((result) => {
+    return con.getItemByCAML(listName, { ViewXml: caml },this.props.listId).then((result) => {
       let calEvents = result.map((event) => {
         return EventConverter.getFCEvent(event, this.props.fieldMapping);
       });

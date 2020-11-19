@@ -49,14 +49,17 @@ export class SiteConnector{
   }
 
   public getListTitlesByTemplate(site: string,templateId:string): Promise<ISPLists> {
-    return this.context.spHttpClient.get(site + `/_api/web/lists?select=Title,ServerRelativeUrl&$filter=Hidden eq false and BaseTemplate eq `+templateId, SPHttpClient.configurations.v1)
+    return this.context.spHttpClient.get(site + `/_api/web/lists?select=Title,Id&$filter=Hidden eq false and BaseTemplate eq `+templateId, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
       });
   }
 
-  public getListFormProperties(site: string,listName:string): Promise<string>{
-    return this.context.spHttpClient.get(site+"/_api/web/lists/GetByTitle('" + listName + "')/Forms?$select=ServerRelativeUrl", SPHttpClient.configurations.v1)
+  public getListFormProperties(site: string,listName:string,listId?:string): Promise<string>{
+    let getBy:string = (listId)?"GetById":"GetByTitle";
+    let key =  (listId)?listId:listName;
+
+    return this.context.spHttpClient.get(site+`/_api/web/lists/${getBy}('${key}')/Forms?$select=ServerRelativeUrl`, SPHttpClient.configurations.v1)
     .then((response:SPHttpClientResponse)=>{
       return response.json();
     });
@@ -72,11 +75,13 @@ export class SiteConnector{
    * @param listNameColumns
    * @param listsite
    */
-  public getListColumns(listNameColumns: string,listsite: string): Promise<any> {
-    return this.context.spHttpClient.get(listsite + `/_api/web/lists/GetByTitle('${listNameColumns}')/Fields?$filter=Hidden eq false and ReadOnlyField eq false`, SPHttpClient.configurations.v1)
+  public getListColumns(listNameColumns: string,listsite: string,listId?:string): Promise<any> {
+    let getBy:string = (listId)?"GetById":"GetByTitle";
+    let key =  (listId)?listId:listNameColumns;
+    return this.context.spHttpClient.get(listsite + `/_api/web/lists/${getBy}('${key}')/Fields?$filter=Hidden eq false and ReadOnlyField eq false`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
-      });
+    });
   }
 
   /**
@@ -87,11 +92,13 @@ export class SiteConnector{
    * @param listNameColumns
    * @param listsite
    */
-  public getEventListColumns(listNameColumns: string,listsite: string): Promise<any> {
-    return this.context.spHttpClient.get(listsite + `/_api/web/lists/GetByTitle('${listNameColumns}')/Fields?$filter=Hidden eq false and ReadOnlyField eq false and (FieldTypeKind eq 2 or FieldTypeKind eq 3 or FieldTypeKind eq 4 or FieldTypeKind eq 6 or FieldTypeKind eq 8)`, SPHttpClient.configurations.v1)
+  public getEventListColumns(listNameColumns: string,listsite: string,listId?:string): Promise<any> {
+    let getBy:string = (listId)?"GetById":"GetByTitle";
+    let key =  (listId)?listId:listNameColumns;
+    return this.context.spHttpClient.get(listsite + `/_api/web/lists/${getBy}('${key}')/Fields?$filter=Hidden eq false and ReadOnlyField eq false and (FieldTypeKind eq 2 or FieldTypeKind eq 3 or FieldTypeKind eq 4 or FieldTypeKind eq 6 or FieldTypeKind eq 8)`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
-      });
+    });
   }
 
   /**
@@ -100,11 +107,14 @@ export class SiteConnector{
    * @param listNameColumns
    * @param listsite
    */
-  public getColumnOptions(columnName:string,listNameColumns: string,listsite: string): Promise<any> {
-    return this.context.spHttpClient.get(listsite + `/_api/web/lists/GetByTitle('${listNameColumns}')/Fields?$filter=EntityPropertyName eq '${columnName}'`, SPHttpClient.configurations.v1)
+  public getColumnOptions(columnName:string,listNameColumns: string,listsite: string,listId?:string): Promise<any> {
+    let getBy:string = (listId)?"GetById":"GetByTitle";
+    let key =  (listId)?listId:listNameColumns;
+    return this.context.spHttpClient.get(listsite + `/_api/web/lists/${getBy}('${key}')/Fields?$filter=EntityPropertyName eq '${columnName}'`, SPHttpClient.configurations.v1)
     .then((response: SPHttpClientResponse) => {
       return response.json();
     });
   }
+
 }
 

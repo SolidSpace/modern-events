@@ -39,12 +39,14 @@ export interface IEventPanelState {
   isSaveInProgress:boolean;
   event: ISPEvent;
   inputValidation: boolean;
+  listPath:string;
 }
 
 export class EventPanel extends React.Component<IEventPanelProps, IEventPanelState> {
 
   constructor(props: IEventPanelProps) {
     super(props);
+    let pos = this.props.relativeLibOrListUrl.toLowerCase().indexOf("/lists");
     if (this.props.event != null) {
       this.state = {
         isEditMode: false,
@@ -52,7 +54,8 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
         isDialogOpen: false,
         event: EventConverter.getSPEvent(props.event),
         inputValidation: false,
-        isSaveInProgress:false
+        isSaveInProgress:false,
+        listPath:this.props.relativeLibOrListUrl.substr(pos)
       };
     } else {
       let eventDate = this.props.newDateStr?moment(this.props.newDateStr+"00:00:00","YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DDTHH:mm:ss"): moment().format("YYYY-MM-DDTHH:mm:ss");
@@ -71,7 +74,8 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
           Description: ""
         },
         inputValidation: false,
-        isSaveInProgress:false
+        isSaveInProgress:false,
+        listPath:this.props.relativeLibOrListUrl.substr(pos)
       };
     }
   }
@@ -259,12 +263,8 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
     if(this.state.isSaveInProgress){
       return <div className="se-PanelActions"><Spinner label="save in progress" labelPosition="bottom" size={SpinnerSize.large}></Spinner></div>;
     }
-    let relativeSiteUrl = this.props.remoteSiteUrl ? this.props.remoteSiteUrl.replace(/https:\/\/.+.sharepoint.com/g, "") + this.props.relativeLibOrListUrl : "";
+    let relativeSiteUrl = this.props.remoteSiteUrl ? this.props.remoteSiteUrl.replace(/https:\/\/.+.sharepoint.com/g, "") + this.state.listPath : "";
     relativeSiteUrl = !relativeSiteUrl.substr(1, 1).match("/") ? relativeSiteUrl : "/" + relativeSiteUrl;
-    console.warn("******SECURITY URLS ********")
-    console.warn("relativeSiteUrl:" +relativeSiteUrl);
-    console.warn("RemoteSiteUrl:" +this.props.remoteSiteUrl);
-    console.warn("******SECURITY URLS END ********")
     if (this.state.isEditMode) {
       return (
         <div className="se-PanelActions">
