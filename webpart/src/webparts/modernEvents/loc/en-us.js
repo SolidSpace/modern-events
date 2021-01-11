@@ -47,6 +47,8 @@ define([], function () {
     "LabelButtonMonth": "Month",
     "LabelButtonTime": "Week",
     "LabelButtonList": "List",
+    "LabelButtonNew": "New",
+    "LabelButtonNewEntry": "New Entry",
     //Event Panel Labels
     "LabelEventTitle": "Title",
     "LabelEventCategory": "Category",
@@ -55,6 +57,16 @@ define([], function () {
     "LabelEventStartDate": "Start Date",
     "LabelEventEndDate": "End Date",
     "LabelEventDescription": "Description",
+    "LabelButtonToday":"Today",
+    //DatePicker inner Labels
+    "Months":["January","February","March","April","May","June","July","August","September","October","November","December"],
+    "ShortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    "Days":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    "ShortDays":["Mo","Tu","We","Th","Fr","Sa","Su"],
+    "GoToToday":"Today",
+      //EventPanel Buttons
+    "LabelEventDelete":"Delete",
+    "LabelEventCancel":"Cancel",
     //Tooltips
     "TooltipCancel": "Cancel",
     "TooltipEdit": "Edit",
@@ -71,6 +83,9 @@ define([], function () {
     "WeekDay5":"Friday",
     "WeekDay6":"Saturday",
     //Errors
-    "ErrIENotCompatible":"Internet Explorer is not compatible with this Calendar Element. Please consider using Chrome. Firefox or Edge Browser."
+    "ErrIENotCompatible":"Internet Explorer is not compatible with this Calendar Element. Please consider using Chrome. Firefox or Edge Browser.",
+    "ErrinvalidInputErrorMessage":"The value is does not meet condtion. Please check",
+    "ErrIsOutOfBoundsErrorMessage":"Entered value is out bounds",
+    "ErrIsRequiredErrorMessage":"This Field is required. "
   }
 });

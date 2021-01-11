@@ -20,6 +20,7 @@ import { ICBButtonVisibility } from "./ICBButtonVisibility";
 import { IFieldMap } from './IFieldMap';
 import { MessageBar, MessageBarType } from 'office-ui-fabric-react';
 import ModernEventsWebPart from '../ModernEventsWebPart';
+import { ICultureInformation } from './ICultureInformation';
 export interface IInteraction {
   dateClickNew: boolean;
   dragAndDrop: boolean;
@@ -42,6 +43,7 @@ export interface ICalendarAppProps {
   timeformat: string;
   interactions: IInteraction;
   displayOptions: IDisplayOptions;
+  cultureInformation:ICultureInformation;
 }
 
 export interface ICalendarAppState {
@@ -107,6 +109,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
             cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
             interactions={nextProps.interactions}
             displayOptions={nextProps.displayOptions}
+            cultureInformation={nextProps.cultureInformation}
           >
           </EventCalendar>
         });
@@ -138,6 +141,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
             cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
             interactions={this.props.interactions}
             displayOptions={this.props.displayOptions}
+            cultureInformation={this.props.cultureInformation}
           >
           </EventCalendar>
         });
@@ -156,6 +160,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
           cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
           interactions={this.props.interactions}
           displayOptions={this.props.displayOptions}
+          cultureInformation={this.props.cultureInformation}
         ></EventCalendar>
       });
     }
@@ -220,6 +225,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
             cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
             interactions={this.props.interactions}
             displayOptions={this.props.displayOptions}
+            cultureInformation={this.props.cultureInformation}
           ></EventCalendar>
       }
       );
@@ -316,6 +322,7 @@ export class CalendarApp extends React.Component<ICalendarAppProps, ICalendarApp
           cbDragDropEvent={this._dragDropUpdateEvent.bind(this)}
           interactions={this.props.interactions}
           displayOptions={this.props.displayOptions}
+          cultureInformation={this.props.cultureInformation}
         ></EventCalendar>
       });
     }).catch((error) => {

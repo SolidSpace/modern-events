@@ -46,6 +46,7 @@ declare interface IModernEventsWebPartStrings {
   LabelButtonMonth: string;
   LabelButtonTime: string;
   LabelButtonList: string;
+  LabelButtonToday: string;
   //EventPanel Labels
   LabelEventTitle: string;
   LabelEventCategory: string;
@@ -54,6 +55,15 @@ declare interface IModernEventsWebPartStrings {
   LabelEventStartDate: string;
   LabelEventEndDate: string;
   LabelEventDescription: string;
+  //EventPanel Buttons
+  LabelEventDelete:string;
+  LabelEventCancel:string;
+  //DatePicker inner Labels
+  Months:string[];
+  ShortMonths:string[];
+  Days:string[];
+  ShortDays:string[];
+  GoToToday:string;
   //Event Panel ComboBox Values
   WeekDay0:string;
   WeekDay1:string;
@@ -72,6 +82,9 @@ declare interface IModernEventsWebPartStrings {
   LabelAllDay: string;
   //Errors
   ErrIENotCompatible:string;
+  ErrinvalidInputErrorMessage:string;
+  ErrIsOutOfBoundsErrorMessage:string;
+  ErrIsRequiredErrorMessage:string;
 }
 
 declare module 'ModernEventsWebPartStrings' {

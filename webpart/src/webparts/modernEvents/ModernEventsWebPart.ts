@@ -8,7 +8,8 @@ import { MessageBarButton,Link,Stack,StackItem, MessageBar, MessageBarType, Choi
 import { Placeholder, IPlaceholderProps } from "@pnp/spfx-controls-react/lib/Placeholder";
 import * as strings from 'ModernEventsWebPartStrings';
 //import { element } from 'prop-types';
-import { CalendarApp, ICalendarAppProps } from './components/CalendarApp';
+import { CalendarApp, ICalendarAppProps} from './components/CalendarApp';
+import {ICultureInformation} from './components/ICultureInformation';
 import "./sass/style.scss";
 import { DisplayType } from './components/ENUMDisplayType';
 //import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
@@ -64,6 +65,9 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
   //private _listOptions: IPropertyPaneDropdownOption[] = [];
 
   public render(): void {
+    let cultureInformation:ICultureInformation = this.context.pageContext.cultureInfo;
+
+    //_spPageContextInfo.currentUICultureName;
     let ua = navigator.userAgent;
     var isIE = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
     const ieWarning:React.ReactElement<IMessageBarProps>=React.createElement(
@@ -98,6 +102,7 @@ export default class ModernEventsWebPart extends BaseClientSideWebPart<IModernEv
             listId:this.properties.listId,
             timeformat: this.properties.timeformat,
             commandBarVisible: this.properties.commandbar,
+            cultureInformation:cultureInformation,
             commandBarButtonVisibility: {
               month: this.properties.viewMonth,
               time: this.properties.viewWeek,

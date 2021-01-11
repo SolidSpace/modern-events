@@ -119,6 +119,7 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
 
 
   public render(): React.ReactElement<IEventPanelProps> {
+
     let timeConvention = this.props.timeformat == '24h' ? TimeConvention.Hours24 : TimeConvention.Hours12;
     return (
       <Panel isOpen={this.state.isOpen} onAbort={() => console.log("ABORTING PANEL!")}>
@@ -186,7 +187,17 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
                 disabled={!this.state.isEditMode}
                 onChange={this._onChangeStartDate.bind(this)}
                 showGoToToday={true}
-
+                strings={{
+                  invalidInputErrorMessage:strings.ErrinvalidInputErrorMessage,
+                  isOutOfBoundsErrorMessage:strings.ErrIsOutOfBoundsErrorMessage,
+                  isRequiredErrorMessage:strings.ErrIsRequiredErrorMessage,
+                  days:strings.Days,
+                  months:strings.Months,
+                  shortMonths:strings.ShortMonths,
+                  shortDays:strings.ShortDays,
+                  goToToday:strings.GoToToday
+                  }
+                }
               />
             </div>
           </div>
@@ -198,6 +209,17 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
                 value={moment(this.state.event.EndDate).toDate()}
                 disabled={!this.state.isEditMode}
                 onChange={this._onChangeEndDate.bind(this)}
+                strings={{
+                  invalidInputErrorMessage:strings.ErrinvalidInputErrorMessage,
+                  isOutOfBoundsErrorMessage:strings.ErrIsOutOfBoundsErrorMessage,
+                  isRequiredErrorMessage:strings.ErrIsRequiredErrorMessage,
+                  days:strings.Days,
+                  months:strings.Months,
+                  shortMonths:strings.ShortMonths,
+                  shortDays:strings.ShortDays,
+                  goToToday:strings.GoToToday
+                  }
+                }
               />
             </div>
           </div>
@@ -238,7 +260,7 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
             allowDisabledFocus={true}
             disabled={false}
             checked={true}
-            text="Delete"
+            text={strings.LabelEventDelete}
             onClick={this._deleteEvent.bind(this)}
             hidden={true}
           />
@@ -249,7 +271,7 @@ export class EventPanel extends React.Component<IEventPanelProps, IEventPanelSta
             allowDisabledFocus={true}
             disabled={false}
             checked={true}
-            text="Cancel"
+            text={strings.LabelEventCancel}
             onClick={() => this.setState({ isDialogOpen: false })}
           />
         </div>

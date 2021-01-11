@@ -9,6 +9,8 @@ import { ToolbarInput } from '@fullcalendar/core/types/input-types';
 import { DisplayType } from './ENUMDisplayType';
 import interactionPlugin from '@fullcalendar/interaction';
 import {IInteraction,IDisplayOptions} from './CalendarApp';
+import { ICultureInformation } from './ICultureInformation';
+
 export interface IEventCalendarProps {
   cbSelectEntry: any;
   cbUpdateEvents: any;
@@ -19,6 +21,7 @@ export interface IEventCalendarProps {
   timeformat: string;
   interactions:IInteraction;
   displayOptions:IDisplayOptions;
+  cultureInformation:ICultureInformation;
 }
 
 export interface IEventCalendarState {
@@ -68,7 +71,7 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
         click: this._navigateNext.bind(this)
       },
       todayCustom: {
-        text: 'today',
+        text: strings.LabelButtonToday,
         click: this._navigateToday.bind(this)
       }
     };
@@ -99,7 +102,6 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
         break;
     }
 
-
     return (
       <FullCalendar
         allDayText={strings.LabelAllDay}
@@ -120,6 +122,7 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
         eventDragStart={this._eventDragtStart.bind(this)}
         eventDragStop={this._eventDragStop.bind(this)}
         eventDrop={this._eventDrop.bind(this)}
+        locale={this._getSimpleUILocale()}
         firstDay={parseInt(this.props.displayOptions.weekStartsAt)}
         slotLabelFormat={{
           hour12: (this.props.timeformat == '12h') ? true : false,
@@ -184,6 +187,15 @@ export class EventCalendar extends React.Component<IEventCalendarProps, IEventCa
 
   }
 
+  private _getSimpleUILocale():string{
+    let pos = this.props.cultureInformation.currentUICultureName.indexOf("-");
+   return (pos>-1)?this.props.cultureInformation.currentUICultureName.substr(0,pos):"en";
+  }
+
+  private _getSimpleLocale():string{
+    let pos = this.props.cultureInformation.currentUICultureName.indexOf("-");
+   return (pos>-1)?this.props.cultureInformation.currentCultureName.substr(0,pos):"en";
+  }
 
   private _eventClick(parms: any) {
     let event: IFullCalendarEvent = parms.event;

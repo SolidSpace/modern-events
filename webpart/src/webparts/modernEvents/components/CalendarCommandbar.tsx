@@ -45,17 +45,17 @@ export class CalendarCommandbar extends React.Component<ICalendarCommandbarProps
     return [
       {
         key: 'newItem',
-        name: 'New',
+        name: strings.LabelButtonNew,
         cacheKey: 'newitem', // changing this key will invalidate this items cache
         iconProps: {
           iconName: 'Add'
         },
-        ariaLabel: 'New',
+        ariaLabel: strings.LabelButtonNew,
         subMenuProps: {
           items: [
             {
               key: 'calendarentry',
-              name: 'Create Event',
+              name: strings.LabelButtonNewEvent,
               iconProps: {
                 iconName: 'BuildQueueNew'
               },
