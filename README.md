@@ -1,7 +1,7 @@
 ![](https://github.com/SolidSpace/modern-events/blob/master/assets/sharepoint_modern_calendar_banner.jpg)
 
 ## This Webpart is no longer maintained - 
-This Webpart was build as a workaround as a private project. There are still better solutions out there.,
+This Webpart was build as a workaround for the missing SharePoint Calendar Webpart. 
 Please switch over to one of this solutions
 
 https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar
