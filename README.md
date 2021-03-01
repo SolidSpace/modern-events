@@ -5,6 +5,7 @@ This Webpart was build as a workaround for the missing SharePoint Calendar Webpa
 Please switch over to one of this solutions
 
 https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/react-calendar
+
 https://github.com/pnp/sp-dev-fx-webparts/tree/master/samples/js-modern-calendar
 
 
