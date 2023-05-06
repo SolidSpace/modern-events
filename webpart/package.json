@@ -31,7 +31,7 @@
     "camljs": "^2.11.0",
     "ckeditor4-react": "^0.1.1",
     "classnames": "^2.2.6",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "moment": "^2.24.0",
     "office-ui-fabric-react": "6.143.0",
     "react": "16.7.0",
